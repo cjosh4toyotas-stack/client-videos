@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Video Views — Josh</title>
+<style>
+  :root{
+    --red:#EB0A1E;
+    --charcoal:#1A1A1A;
+    --bg:#F5F5F4;
+    --line:#DDD;
+    --green:#1E8E3E;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    background:var(--bg);
+    color:var(--charcoal);
+    font-family:Arial, Helvetica, sans-serif;
+    padding:24px 14px 60px;
+  }
+  .wrap{max-width:820px;margin:0 auto;}
+  .mark{font-weight:bold;letter-spacing:2px;font-size:13px;margin-bottom:4px;}
+  .mark span{color:var(--red);}
+  h1{font-size:24px;margin-bottom:2px;}
+  .sub{color:#666;font-size:14px;margin-bottom:20px;}
+  .status{font-size:14px;color:#666;margin:20px 0;}
+  table{
+    width:100%;
+    border-collapse:collapse;
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:8px;
+    overflow:hidden;
+    font-size:14px;
+  }
+  th{
+    text-align:left;
+    background:var(--charcoal);
+    color:#fff;
+    padding:10px 12px;
+    font-size:12.5px;
+    letter-spacing:0.5px;
+  }
+  td{
+    padding:11px 12px;
+    border-top:1px solid var(--line);
+    vertical-align:top;
+  }
+  .pct{
+    font-weight:bold;
+  }
+  .pct.done{color:var(--green);}
+  .pct.partial{color:var(--charcoal);}
+  .pct.opened{color:#999;font-weight:normal;}
+  .bar{
+    height:6px;
+    background:#EEE;
+    border-radius:3px;
+    margin-top:5px;
+    overflow:hidden;
+    min-width:70px;
+  }
+  .bar i{
+    display:block;
+    height:100%;
+    background:var(--red);
+  }
+  .time{color:#888;font-size:12.5px;}
+  h2{font-size:16px;margin:30px 0 8px;}
+  .log td{font-size:13px;}
+  /* PIN gate */
+  #gate{
+    position:fixed;
+    inset:0;
+    background:var(--charcoal);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:10;
+  }
+  .gatecard{
+    background:#fff;
+    border-radius:10px;
+    padding:26px;
+    width:280px;
+    text-align:center;
+  }
+  .gatecard h1{font-size:18px;margin-bottom:14px;}
+  .gatecard input{
+    width:100%;
+    padding:12px;
+    font-size:18px;
+    text-align:center;
+    letter-spacing:6px;
+    border:1px solid var(--line);
+    border-radius:8px;
+  }
+  .gatecard button{
+    margin-top:12px;
+    width:100%;
+    padding:12px;
+    font-size:15px;
+    font-weight:bold;
+    color:#fff;
+    background:var(--red);
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+  }
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <div class="gatecard">
+    <h1>Enter PIN</h1>
+    <input id="pin" inputmode="numeric" maxlength="4" autocomplete="off">
+    <button onclick="checkPin()">Open</button>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="mark">McGRATH <span>TOYOTA</span></div>
+  <h1>Client Video Views</h1>
+  <div class="sub">Who opened, who watched, how far they got.</div>
+
+  <div class="status" id="status">Loading&hellip;</div>
+
+  <div id="summaryWrap"></div>
+  <div id="logWrap"></div>
+</div>
+
+<script>
+/* ================= CONFIG =================
+   Paste the Google Sheet ID (from the form's
+   response sheet URL) and the tab's gid.
+   Sheet must be shared: Anyone with link, Viewer.
+============================================ */
+var SHEET_ID = "PASTE_SHEET_ID_HERE";
+var GID = "0";
+var PIN = "1461";
+
+/* ---------- PIN gate ---------- */
+function checkPin(){
+  if (document.getElementById("pin").value === PIN){
+    sessionStorage.setItem("vv_ok","1");
+    document.getElementById("gate").style.display = "none";
+    load();
+  }
+}
+document.getElementById("pin").addEventListener("keydown", function(e){
+  if (e.key === "Enter") checkPin();
+});
+if (sessionStorage.getItem("vv_ok") === "1"){
+  document.getElementById("gate").style.display = "none";
+  load();
+}
+
+/* ---------- data ---------- */
+function load(){
+  if (SHEET_ID.indexOf("PASTE_") > -1){
+    document.getElementById("status").textContent =
+      "Tracking sheet not connected yet. Paste the Sheet ID into the CONFIG block at the top of this file's script.";
+    return;
+  }
+  var url = "https://docs.google.com/spreadsheets/d/" + SHEET_ID +
+            "/gviz/tq?tqx=out:json&gid=" + GID;
+  fetch(url)
+    .then(function(r){ return r.text(); })
+    .then(function(text){
+      var json = JSON.parse(text.substring(text.indexOf("{"), text.lastIndexOf("}") + 1));
+      render(parseRows(json));
+    })
+    .catch(function(){
+      document.getElementById("status").textContent =
+        "Couldn't load the sheet. Check that it's shared as Anyone with link (Viewer).";
+    });
+}
+
+function cellVal(c){
+  if (!c) return "";
+  if (c.f !== undefined && c.f !== null) return String(c.f);
+  if (c.v !== undefined && c.v !== null) return String(c.v);
+  return "";
+}
+
+function parseGvizDate(c){
+  /* gviz dates come as "Date(2026,7,28,15,41,0)" in v */
+  if (c && typeof c.v === "string" && c.v.indexOf("Date(") === 0){
+    var n = c.v.slice(5,-1).split(",").map(Number);
+    return new Date(n[0], n[1]||0, n[2]||1, n[3]||0, n[4]||0, n[5]||0);
+  }
+  if (c && c.f) return new Date(c.f);
+  return null;
+}
+
+function parseRows(json){
+  var rows = [];
+  var table = json.table || {};
+  (table.rows || []).forEach(function(r){
+    var c = r.c || [];
+    var ts = parseGvizDate(c[0]);
+    var row = {
+      ts: ts,
+      tsLabel: cellVal(c[0]),
+      client: cellVal(c[1]) || "unknown",
+      video: cellVal(c[2]) || "unknown",
+      event: cellVal(c[3]),
+      percent: parseFloat(cellVal(c[4])) || 0
+    };
+    if (row.event) rows.push(row);
+  });
+  return rows;
+}
+
+function fmtTime(row){
+  if (row.ts instanceof Date && !isNaN(row.ts)){
+    return row.ts.toLocaleString([], {month:"short", day:"numeric", hour:"numeric", minute:"2-digit"});
+  }
+  return row.tsLabel;
+}
+
+function render(rows){
+  if (!rows.length){
+    document.getElementById("status").textContent = "No views logged yet.";
+    return;
+  }
+  document.getElementById("status").style.display = "none";
+
+  /* group by client + video */
+  var groups = {};
+  rows.forEach(function(r){
+    var key = r.client + "\u0000" + r.video;
+    if (!groups[key]){
+      groups[key] = {client:r.client, video:r.video, max:0, opens:0, last:r, lastT:0};
+    }
+    var g = groups[key];
+    if (r.percent > g.max) g.max = r.percent;
+    if (r.event === "Opened") g.opens++;
+    var t = (r.ts instanceof Date && !isNaN(r.ts)) ? r.ts.getTime() : 0;
+    if (t >= g.lastT){ g.lastT = t; g.last = r; }
+  });
+
+  var list = Object.keys(groups).map(function(k){ return groups[k]; });
+  list.sort(function(a,b){ return b.lastT - a.lastT; });
+
+  var html = "<table><tr><th>Client</th><th>Video</th><th>Watched</th><th>Opens</th><th>Last activity</th></tr>";
+  list.forEach(function(g){
+    var cls = g.max >= 100 ? "done" : (g.max > 0 ? "partial" : "opened");
+    var label = g.max >= 100 ? "Completed" : (g.max > 0 ? g.max + "%" : "Opened only");
+    html += "<tr>" +
+      "<td><strong>" + esc(g.client) + "</strong></td>" +
+      "<td>" + esc(g.video) + "</td>" +
+      "<td><span class='pct " + cls + "'>" + label + "</span>" +
+        "<div class='bar'><i style='width:" + Math.min(g.max,100) + "%'></i></div></td>" +
+      "<td>" + g.opens + "</td>" +
+      "<td class='time'>" + esc(fmtTime(g.last)) + "</td>" +
+      "</tr>";
+  });
+  html += "</table>";
+  document.getElementById("summaryWrap").innerHTML = html;
+
+  /* raw log, newest first */
+  var recent = rows.slice().reverse().slice(0, 60);
+  var log = "<h2>Event log</h2><table class='log'><tr><th>Time</th><th>Client</th><th>Video</th><th>Event</th></tr>";
+  recent.forEach(function(r){
+    log += "<tr><td class='time'>" + esc(fmtTime(r)) + "</td><td>" + esc(r.client) +
+           "</td><td>" + esc(r.video) + "</td><td>" + esc(r.event) + "</td></tr>";
+  });
+  log += "</table>";
+  document.getElementById("logWrap").innerHTML = log;
+}
+
+function esc(s){
+  return String(s).replace(/[&<>"']/g, function(m){
+    return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[m];
+  });
+}
+</script>
+</body>
+</html>

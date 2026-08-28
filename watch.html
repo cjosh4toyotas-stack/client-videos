@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Your Video — Josh at McGrath Toyota</title>
+<style>
+  :root{
+    --red:#EB0A1E;
+    --charcoal:#1A1A1A;
+    --stage:#111214;
+    --card:#1C1D20;
+    --text:#F4F4F4;
+    --muted:#9A9CA1;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    background:var(--stage);
+    color:var(--text);
+    font-family:Arial, Helvetica, sans-serif;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+  }
+  header{
+    padding:14px 20px;
+    border-bottom:1px solid #2A2B2E;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .mark{
+    font-weight:bold;
+    letter-spacing:2px;
+    font-size:14px;
+  }
+  .mark span{color:var(--red);}
+  main{
+    width:100%;
+    max-width:760px;
+    margin:0 auto;
+    padding:28px 16px 40px;
+    flex:1;
+  }
+  .eyebrow{
+    color:var(--red);
+    font-size:12px;
+    letter-spacing:3px;
+    text-transform:uppercase;
+    font-weight:bold;
+  }
+  h1{
+    font-size:34px;
+    line-height:1.1;
+    margin:6px 0 4px;
+  }
+  .vtitle{
+    color:var(--muted);
+    font-size:16px;
+    margin-bottom:18px;
+  }
+  .frame{
+    background:#000;
+    border-radius:10px;
+    overflow:hidden;
+    border:1px solid #2A2B2E;
+  }
+  video{
+    display:block;
+    width:100%;
+    max-height:70vh;
+    background:#000;
+  }
+  .after{
+    margin-top:22px;
+    background:var(--card);
+    border:1px solid #2A2B2E;
+    border-radius:10px;
+    padding:18px;
+  }
+  .after p{
+    color:var(--text);
+    font-size:15px;
+    margin-bottom:14px;
+  }
+  .actions{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  .btn{
+    flex:1;
+    min-width:130px;
+    text-align:center;
+    text-decoration:none;
+    padding:13px 16px;
+    border-radius:8px;
+    font-size:15px;
+    font-weight:bold;
+  }
+  .btn.call{background:var(--red);color:#fff;}
+  .btn.text{background:#2A2B2E;color:#fff;border:1px solid #3A3B3E;}
+  footer{
+    padding:16px 20px 26px;
+    text-align:center;
+    color:var(--muted);
+    font-size:12.5px;
+    line-height:1.6;
+  }
+  @media (max-width:480px){
+    h1{font-size:27px;}
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="mark">McGRATH <span>TOYOTA</span></div>
+</header>
+
+<main>
+  <div class="eyebrow" id="eyebrow">A video for</div>
+  <h1 id="clientName">You</h1>
+  <div class="vtitle" id="videoTitle"></div>
+
+  <div class="frame">
+    <video id="player" controls playsinline preload="metadata"></video>
+  </div>
+
+  <div class="after">
+    <p id="afterMsg">Questions after you watch? I'm one tap away.</p>
+    <div class="actions">
+      <a class="btn call" href="tel:3196311461">Call Josh</a>
+      <a class="btn text" href="sms:3196311461">Text Josh</a>
+    </div>
+  </div>
+</main>
+
+<footer>
+  Josh Hicks &middot; McGrath Toyota of Iowa City<br>
+  1445 Highway 1 West, Iowa City, IA &middot; 319-631-1461
+</footer>
+
+<script>
+/* ================= CONFIG =================
+   Tracking posts to a Google Form. Until the
+   real IDs are pasted below, tracking is off
+   and the page still plays video normally.
+============================================ */
+var TRACK = {
+  FORM_ID: "PASTE_FORM_ID_HERE",
+  ENTRY_CLIENT: "entry.1111111111",
+  ENTRY_VIDEO:  "entry.2222222222",
+  ENTRY_EVENT:  "entry.3333333333",
+  ENTRY_PERCENT:"entry.4444444444"
+};
+
+function getParam(name){
+  return new URLSearchParams(window.location.search).get(name) || "";
+}
+
+var client = getParam("c");
+var title  = getParam("t");
+var vsrc   = getParam("v");
+
+if (client){
+  document.getElementById("clientName").textContent = client;
+  document.title = "A video for " + client + " — Josh at McGrath Toyota";
+} else {
+  document.getElementById("eyebrow").textContent = "A video from Josh";
+  document.getElementById("clientName").textContent = "McGrath Toyota";
+}
+if (title){
+  document.getElementById("videoTitle").textContent = title;
+}
+
+var player = document.getElementById("player");
+if (vsrc){
+  player.src = vsrc; // filename in this repo, or a full https:// URL
+} else {
+  document.querySelector(".frame").style.display = "none";
+  document.getElementById("afterMsg").textContent =
+    "This video link is missing its video. Call or text me and I'll resend it.";
+}
+
+/* ---------- tracking ---------- */
+var trackingOn = TRACK.FORM_ID.indexOf("PASTE_") === -1;
+var sent = {};
+var videoLabel = title || vsrc || "unknown";
+
+function beacon(eventName, percent){
+  if (!trackingOn || sent[eventName]) return;
+  sent[eventName] = true;
+  var url = "https://docs.google.com/forms/d/e/" + TRACK.FORM_ID + "/formResponse";
+  var data = new FormData();
+  data.append(TRACK.ENTRY_CLIENT,  client || "unknown");
+  data.append(TRACK.ENTRY_VIDEO,   videoLabel);
+  data.append(TRACK.ENTRY_EVENT,   eventName);
+  data.append(TRACK.ENTRY_PERCENT, String(percent));
+  if (navigator.sendBeacon){
+    navigator.sendBeacon(url, data);
+  } else {
+    fetch(url, {method:"POST", mode:"no-cors", body:data, keepalive:true});
+  }
+}
+
+beacon("Opened", 0);
+
+player.addEventListener("play", function(){ beacon("Started", 1); });
+
+player.addEventListener("timeupdate", function(){
+  if (!player.duration) return;
+  var pct = (player.currentTime / player.duration) * 100;
+  if (pct >= 95){ beacon("Completed", 100); }
+  else if (pct >= 75){ beacon("Watched 75%", 75); }
+  else if (pct >= 50){ beacon("Watched 50%", 50); }
+  else if (pct >= 25){ beacon("Watched 25%", 25); }
+});
+
+player.addEventListener("ended", function(){ beacon("Completed", 100); });
+</script>
+</body>
+</html>

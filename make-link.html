@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Link Builder — Client Videos</title>
+<style>
+  :root{
+    --red:#EB0A1E;
+    --charcoal:#1A1A1A;
+    --bg:#F5F5F4;
+    --line:#DDD;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    background:var(--bg);
+    color:var(--charcoal);
+    font-family:Arial, Helvetica, sans-serif;
+    padding:24px 16px 60px;
+  }
+  .wrap{max-width:640px;margin:0 auto;}
+  .mark{font-weight:bold;letter-spacing:2px;font-size:13px;margin-bottom:4px;}
+  .mark span{color:var(--red);}
+  h1{font-size:24px;margin-bottom:2px;}
+  .sub{color:#666;font-size:14px;margin-bottom:22px;}
+  label{
+    display:block;
+    font-size:13px;
+    font-weight:bold;
+    margin:16px 0 5px;
+  }
+  input{
+    width:100%;
+    padding:12px;
+    font-size:15px;
+    border:1px solid var(--line);
+    border-radius:8px;
+    background:#fff;
+    font-family:Arial, Helvetica, sans-serif;
+  }
+  .hint{font-size:12px;color:#888;margin-top:4px;}
+  button{
+    margin-top:22px;
+    width:100%;
+    padding:14px;
+    font-size:16px;
+    font-weight:bold;
+    color:#fff;
+    background:var(--red);
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+  }
+  .out{
+    margin-top:26px;
+    display:none;
+  }
+  .out h2{font-size:15px;margin-bottom:6px;}
+  .box{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:12px;
+    font-size:14px;
+    word-break:break-all;
+    line-height:1.5;
+  }
+  .copy{
+    margin-top:8px;
+    background:var(--charcoal);
+    padding:11px;
+    font-size:14px;
+  }
+  .msgbox{white-space:pre-wrap;word-break:normal;}
+  .spacer{height:14px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="mark">McGRATH <span>TOYOTA</span></div>
+  <h1>Client Video Link Builder</h1>
+  <div class="sub">Upload the video to the repo first, then build the link here.</div>
+
+  <label for="vfile">Video file</label>
+  <input id="vfile" placeholder="bailey-highlander.mp4">
+  <div class="hint">Exact filename in the repo (case-sensitive), or paste a full https:// URL for a video hosted elsewhere.</div>
+
+  <label for="cname">Client first name</label>
+  <input id="cname" placeholder="Bailey">
+
+  <label for="vtitle">Video title</label>
+  <input id="vtitle" placeholder="2022 Highlander XLE Walkaround">
+
+  <button onclick="build()">Build link</button>
+
+  <div class="out" id="out">
+    <h2>Share link</h2>
+    <div class="box" id="linkBox"></div>
+    <button class="copy" onclick="copyText('linkBox', this)">Copy link</button>
+
+    <div class="spacer"></div>
+
+    <h2>Ready-to-send text</h2>
+    <div class="box msgbox" id="msgBox"></div>
+    <button class="copy" onclick="copyText('msgBox', this)">Copy message</button>
+  </div>
+</div>
+
+<script>
+/* Base URL of this site once GitHub Pages is on.
+   Change only if the repo gets a different name. */
+var BASE_URL = "https://cjosh4toyotas-stack.github.io/client-videos/";
+
+function build(){
+  var v = document.getElementById("vfile").value.trim();
+  var c = document.getElementById("cname").value.trim();
+  var t = document.getElementById("vtitle").value.trim();
+  if (!v){ alert("Enter the video filename."); return; }
+
+  var link = BASE_URL + "watch.html?v=" + encodeURIComponent(v);
+  if (c) link += "&c=" + encodeURIComponent(c);
+  if (t) link += "&t=" + encodeURIComponent(t);
+
+  document.getElementById("linkBox").textContent = link;
+
+  var msg = (c ? "Hi " + c + ", " : "Hi, ") +
+    "I made a quick video for you" +
+    (t ? " — " + t : "") +
+    ". Take a look when you get a minute:\n\n" + link +
+    "\n\nJosh at McGrath Toyota";
+  document.getElementById("msgBox").textContent = msg;
+
+  document.getElementById("out").style.display = "block";
+}
+
+function copyText(id, btn){
+  var text = document.getElementById(id).textContent;
+  navigator.clipboard.writeText(text).then(function(){
+    var old = btn.textContent;
+    btn.textContent = "Copied";
+    setTimeout(function(){ btn.textContent = old; }, 1500);
+  });
+}
+</script>
+</body>
+</html>
