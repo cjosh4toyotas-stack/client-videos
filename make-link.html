@@ -11,6 +11,7 @@
     --charcoal:#1A1A1A;
     --bg:#F5F5F4;
     --line:#DDD;
+    --green:#1E8E3E;
   }
   *{margin:0;padding:0;box-sizing:border-box;}
   body{
@@ -24,13 +25,24 @@
   .mark span{color:var(--red);}
   h1{font-size:24px;margin-bottom:2px;}
   .sub{color:#666;font-size:14px;margin-bottom:22px;}
+  .card{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:16px;
+    margin-bottom:20px;
+  }
+  .card h2{font-size:15px;margin-bottom:10px;}
+  .card p{font-size:13px;color:#555;line-height:1.5;margin-bottom:10px;}
+  .card a{color:var(--red);}
   label{
     display:block;
     font-size:13px;
     font-weight:bold;
     margin:16px 0 5px;
   }
-  input{
+  .card label{margin-top:10px;}
+  input[type=text],input[type=password]{
     width:100%;
     padding:12px;
     font-size:15px;
@@ -41,7 +53,7 @@
   }
   .hint{font-size:12px;color:#888;margin-top:4px;}
   button{
-    margin-top:22px;
+    margin-top:14px;
     width:100%;
     padding:14px;
     font-size:16px;
@@ -51,11 +63,36 @@
     border:none;
     border-radius:8px;
     cursor:pointer;
+    font-family:Arial, Helvetica, sans-serif;
   }
-  .out{
-    margin-top:26px;
+  .drop{
+    border:2px dashed #BBB;
+    border-radius:10px;
+    background:#FAFAF9;
+    padding:34px 16px;
+    text-align:center;
+    color:#666;
+    font-size:15px;
+    cursor:pointer;
+  }
+  .drop.over{border-color:var(--red);background:#FFF5F5;color:var(--charcoal);}
+  .drop strong{color:var(--charcoal);}
+  .drop .small{font-size:12px;color:#999;margin-top:6px;}
+  .progress{
     display:none;
+    margin-top:12px;
+    height:10px;
+    background:#EEE;
+    border-radius:5px;
+    overflow:hidden;
   }
+  .progress i{display:block;height:100%;width:0;background:var(--red);transition:width .2s;}
+  .upstatus{font-size:13px;margin-top:10px;display:none;line-height:1.5;}
+  .upstatus.ok{color:var(--green);font-weight:bold;}
+  .upstatus.err{color:var(--red);font-weight:bold;}
+  .tiny{font-size:12px;color:#999;margin-top:10px;}
+  .tiny a{color:#999;}
+  .out{margin-top:26px;display:none;}
   .out h2{font-size:15px;margin-bottom:6px;}
   .box{
     background:#fff;
@@ -66,12 +103,7 @@
     word-break:break-all;
     line-height:1.5;
   }
-  .copy{
-    margin-top:8px;
-    background:var(--charcoal);
-    padding:11px;
-    font-size:14px;
-  }
+  .copy{margin-top:8px;background:var(--charcoal);padding:11px;font-size:14px;}
   .msgbox{white-space:pre-wrap;word-break:normal;}
   .spacer{height:14px;}
 </style>
@@ -80,17 +112,43 @@
 <div class="wrap">
   <div class="mark">McGRATH <span>TOYOTA</span></div>
   <h1>Client Video Link Builder</h1>
-  <div class="sub">Upload the video to the repo first, then build the link here.</div>
+  <div class="sub">Drop the video below, then build the client link.</div>
+
+  <!-- one-time storage connection (per device) -->
+  <div class="card" id="setupCard" style="display:none;">
+    <h2>One-time setup on this device</h2>
+    <p>Uploads go to the client-videos storage bucket on Cloudflare. Paste the three values from the Cloudflare dashboard &mdash; they're saved only in this browser, on this device.</p>
+    <label for="inKey">Access Key ID</label>
+    <input type="text" id="inKey" autocomplete="off">
+    <label for="inSecret">Secret Access Key</label>
+    <input type="password" id="inSecret" autocomplete="off">
+    <label for="inPub">Public URL</label>
+    <input type="text" id="inPub" placeholder="https://pub-xxxxxxxx.r2.dev">
+    <button onclick="saveCreds()">Save on this device</button>
+  </div>
+
+  <!-- dropzone -->
+  <div class="card" id="dropCard" style="display:none;">
+    <h2>Upload video</h2>
+    <div class="drop" id="drop">
+      <strong>Drag the video file here</strong> or tap to choose<br>
+      <div class="small">.mp4 or .m4v &middot; big 60fps files are fine &middot; never touches the repo</div>
+    </div>
+    <input type="file" id="fileInput" accept="video/mp4,video/x-m4v,.mp4,.m4v" style="display:none;">
+    <div class="progress" id="prog"><i id="progBar"></i></div>
+    <div class="upstatus" id="upstatus"></div>
+    <div class="tiny">Storage connected on this device &middot; <a href="#" onclick="forgetCreds(event)">disconnect</a></div>
+  </div>
 
   <label for="vfile">Video file</label>
-  <input id="vfile" placeholder="bailey-highlander.mp4">
-  <div class="hint">Exact filename in the repo (case-sensitive), or paste a full https:// URL for a video hosted elsewhere.</div>
+  <input type="text" id="vfile" placeholder="bailey-highlander.mp4">
+  <div class="hint">Fills in automatically after an upload. Or type a filename already uploaded, or paste a full https:// URL.</div>
 
   <label for="cname">Client first name</label>
-  <input id="cname" placeholder="Bailey">
+  <input type="text" id="cname" placeholder="Bailey">
 
   <label for="vtitle">Video title</label>
-  <input id="vtitle" placeholder="2022 Highlander XLE Walkaround">
+  <input type="text" id="vtitle" placeholder="2022 Highlander XLE Walkaround">
 
   <button onclick="build()">Build link</button>
 
@@ -98,9 +156,7 @@
     <h2>Share link</h2>
     <div class="box" id="linkBox"></div>
     <button class="copy" onclick="copyText('linkBox', this)">Copy link</button>
-
     <div class="spacer"></div>
-
     <h2>Ready-to-send text</h2>
     <div class="box msgbox" id="msgBox"></div>
     <button class="copy" onclick="copyText('msgBox', this)">Copy message</button>
@@ -108,17 +164,222 @@
 </div>
 
 <script>
-/* Base URL of this site once GitHub Pages is on.
-   Change only if the repo gets a different name. */
+/* ================= CONFIG ================= */
+var ACCOUNT_ID = "ee08483725cbf0f4b7f8022b9d149c50";
+var BUCKET = "client-videos";
 var BASE_URL = "https://cjosh4toyotas-stack.github.io/client-videos/";
+var K_KEY = "cv_r2_key", K_SECRET = "cv_r2_secret", K_PUB = "cv_r2_pub";
+/* ========================================== */
 
+function creds(){
+  return {
+    key: localStorage.getItem(K_KEY) || "",
+    secret: localStorage.getItem(K_SECRET) || "",
+    pub: (localStorage.getItem(K_PUB) || "").replace(/\/+$/,"")
+  };
+}
+function connected(){ var c = creds(); return c.key && c.secret && c.pub; }
+
+function showState(){
+  document.getElementById("setupCard").style.display = connected() ? "none" : "block";
+  document.getElementById("dropCard").style.display  = connected() ? "block" : "none";
+}
+showState();
+
+function saveCreds(){
+  var k = document.getElementById("inKey").value.trim();
+  var s = document.getElementById("inSecret").value.trim();
+  var p = document.getElementById("inPub").value.trim();
+  if (!k || !s || !p){ alert("All three values are needed."); return; }
+  if (p.indexOf("https://") !== 0){ alert("The Public URL should start with https://"); return; }
+  localStorage.setItem(K_KEY, k);
+  localStorage.setItem(K_SECRET, s);
+  localStorage.setItem(K_PUB, p);
+  document.getElementById("inKey").value = "";
+  document.getElementById("inSecret").value = "";
+  document.getElementById("inPub").value = "";
+  showState();
+}
+
+function forgetCreds(e){
+  e.preventDefault();
+  localStorage.removeItem(K_KEY);
+  localStorage.removeItem(K_SECRET);
+  localStorage.removeItem(K_PUB);
+  showState();
+}
+
+/* ---------- SigV4 presigned URL (WebCrypto) ---------- */
+function strBytes(s){ return new TextEncoder().encode(s); }
+function hex(buf){
+  return Array.prototype.map.call(new Uint8Array(buf), function(b){
+    return ("0" + b.toString(16)).slice(-2);
+  }).join("");
+}
+function hmac(keyBytes, msg){
+  return crypto.subtle.importKey("raw", keyBytes, {name:"HMAC", hash:"SHA-256"}, false, ["sign"])
+    .then(function(k){ return crypto.subtle.sign("HMAC", k, strBytes(msg)); });
+}
+function sha256hex(s){
+  return crypto.subtle.digest("SHA-256", strBytes(s)).then(hex);
+}
+function enc(s){
+  return encodeURIComponent(s).replace(/[!'()*]/g, function(c){
+    return "%" + c.charCodeAt(0).toString(16).toUpperCase();
+  });
+}
+
+function presign(opts){
+  var u = new URL(opts.url);
+  var amzdate = opts.datetime; // YYYYMMDDTHHMMSSZ
+  var datestamp = amzdate.slice(0,8);
+  var region = opts.region;
+  var scope = datestamp + "/" + region + "/s3/aws4_request";
+  var params = {
+    "X-Amz-Algorithm": "AWS4-HMAC-SHA256",
+    "X-Amz-Credential": opts.accessKeyId + "/" + scope,
+    "X-Amz-Date": amzdate,
+    "X-Amz-Expires": String(opts.expires),
+    "X-Amz-SignedHeaders": "host"
+  };
+  var qs = Object.keys(params).sort().map(function(k){
+    return enc(k) + "=" + enc(params[k]);
+  }).join("&");
+  var canonical = [
+    opts.method,
+    u.pathname,
+    qs,
+    "host:" + u.host + "\n",
+    "host",
+    "UNSIGNED-PAYLOAD"
+  ].join("\n");
+  return sha256hex(canonical).then(function(chash){
+    var sts = ["AWS4-HMAC-SHA256", amzdate, scope, chash].join("\n");
+    return hmac(strBytes("AWS4" + opts.secretAccessKey), datestamp)
+      .then(function(k){ return hmac(k, region); })
+      .then(function(k){ return hmac(k, "s3"); })
+      .then(function(k){ return hmac(k, "aws4_request"); })
+      .then(function(k){ return hmac(k, sts); })
+      .then(function(sig){
+        return opts.url + "?" + qs + "&X-Amz-Signature=" + hex(sig);
+      });
+  });
+}
+
+/* ---------- dropzone ---------- */
+var drop = document.getElementById("drop");
+var fileInput = document.getElementById("fileInput");
+
+drop.addEventListener("click", function(){ fileInput.click(); });
+fileInput.addEventListener("change", function(){
+  if (fileInput.files.length) handleFile(fileInput.files[0]);
+});
+["dragover","dragenter"].forEach(function(ev){
+  drop.addEventListener(ev, function(e){ e.preventDefault(); drop.classList.add("over"); });
+});
+["dragleave","drop"].forEach(function(ev){
+  drop.addEventListener(ev, function(e){ e.preventDefault(); drop.classList.remove("over"); });
+});
+drop.addEventListener("drop", function(e){
+  if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+});
+
+function setStatus(msg, cls){
+  var el = document.getElementById("upstatus");
+  el.textContent = msg;
+  el.className = "upstatus " + (cls || "");
+  el.style.display = "block";
+}
+
+function cleanName(name){
+  var dot = name.lastIndexOf(".");
+  var base = dot > -1 ? name.slice(0, dot) : name;
+  var ext  = dot > -1 ? name.slice(dot).toLowerCase() : "";
+  base = base.toLowerCase().replace(/[^a-z0-9_-]+/g, "-").replace(/^-+|-+$/g, "");
+  return (base || "video") + ext;
+}
+
+function amzNow(){
+  return new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
+}
+
+function handleFile(file){
+  var name = cleanName(file.name);
+  if (!/\.(mp4|m4v)$/.test(name)){
+    if (!confirm(name + " isn't .mp4 or .m4v — some phones may not play it. Upload anyway?")) return;
+  }
+  var endpoint = "https://" + ACCOUNT_ID + ".r2.cloudflarestorage.com/" + BUCKET + "/" + name;
+  var c = creds();
+  setStatus("Preparing upload\u2026");
+  presign({
+    method: "PUT",
+    url: endpoint,
+    accessKeyId: c.key,
+    secretAccessKey: c.secret,
+    region: "auto",
+    datetime: amzNow(),
+    expires: 3600
+  }).then(function(signedUrl){
+    upload(file, name, signedUrl);
+  }).catch(function(){
+    setStatus("Couldn't prepare the upload. Check the saved keys (disconnect below and re-enter them).", "err");
+  });
+}
+
+function upload(file, name, signedUrl){
+  var xhr = new XMLHttpRequest();
+  xhr.open("PUT", signedUrl);
+  /* m4v is the same container as mp4 — serve both as video/mp4 for widest playback */
+  xhr.setRequestHeader("Content-Type", "video/mp4");
+
+  var prog = document.getElementById("prog");
+  var bar = document.getElementById("progBar");
+  prog.style.display = "block";
+  bar.style.width = "0%";
+  setStatus("Uploading " + name + "\u2026");
+
+  xhr.upload.onprogress = function(e){
+    if (e.lengthComputable){
+      var pct = Math.round((e.loaded / e.total) * 100);
+      bar.style.width = pct + "%";
+      setStatus("Uploading " + name + "\u2026 " + pct + "%");
+    }
+  };
+  xhr.onload = function(){
+    prog.style.display = "none";
+    if (xhr.status >= 200 && xhr.status < 300){
+      setStatus(name + " uploaded.", "ok");
+      document.getElementById("vfile").value = name;
+      document.getElementById("cname").focus();
+    } else if (xhr.status === 403){
+      setStatus("Storage said no (403). The saved keys are wrong or expired — disconnect below and re-enter them.", "err");
+    } else {
+      setStatus("Upload failed (error " + xhr.status + "). Try again.", "err");
+    }
+  };
+  xhr.onerror = function(){
+    prog.style.display = "none";
+    setStatus("Upload failed — couldn't reach storage. If this keeps happening, the bucket's CORS policy may be missing.", "err");
+  };
+  xhr.send(file);
+}
+
+/* ---------- link builder ---------- */
 function build(){
   var v = document.getElementById("vfile").value.trim();
   var c = document.getElementById("cname").value.trim();
   var t = document.getElementById("vtitle").value.trim();
-  if (!v){ alert("Enter the video filename."); return; }
+  if (!v){ alert("Upload a video or enter its filename."); return; }
 
-  var link = BASE_URL + "watch.html?v=" + encodeURIComponent(v);
+  var src;
+  if (v.indexOf("://") > -1){
+    src = v;
+  } else {
+    var pub = creds().pub;
+    if (!pub){ alert("Connect storage first (or paste a full https:// URL)."); return; }
+    src = pub + "/" + v;
+  }
+  var link = BASE_URL + "watch.html?v=" + encodeURIComponent(src);
   if (c) link += "&c=" + encodeURIComponent(c);
   if (t) link += "&t=" + encodeURIComponent(t);
 
