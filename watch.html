@@ -65,7 +65,24 @@
     border-radius:10px;
     overflow:hidden;
     border:1px solid #2A2B2E;
+    position:relative;
   }
+  .wm{
+    position:absolute;
+    top:10px;
+    right:12px;
+    z-index:2;
+    pointer-events:none;
+    text-align:right;
+    font-size:12px;
+    line-height:1.45;
+    color:rgba(255,255,255,0.92);
+    text-shadow:0 1px 3px rgba(0,0,0,0.9);
+    background:rgba(0,0,0,0.35);
+    padding:4px 8px;
+    border-radius:5px;
+  }
+  .wm strong{letter-spacing:0.3px;}
   video{
     display:block;
     width:100%;
@@ -125,6 +142,7 @@
 
   <div class="frame">
     <video id="player" controls playsinline preload="metadata"></video>
+    <div class="wm"><strong>Josh Hicks &middot; McGrath Toyota</strong><br>319-631-1461</div>
   </div>
 
   <div class="after">
@@ -186,7 +204,7 @@ if (vsrc){
 /* ---------- tracking ---------- */
 var trackingOn = TRACK.FORM_ID.indexOf("PASTE_") === -1;
 var sent = {};
-var videoLabel = title || vsrc || "unknown";
+var videoLabel = title || ((vsrc.split("/").pop() || "unknown").split("?")[0]);
 
 function beacon(eventName, percent){
   if (!trackingOn || sent[eventName]) return;
