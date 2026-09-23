@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Your Video — Josh Hicks</title>
+<style>
+  :root{
+    --red:#1FB6FF;
+    --charcoal:#1A1A1A;
+    --stage:#111214;
+    --card:#1C1D20;
+    --text:#F4F4F4;
+    --muted:#9A9CA1;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    background:var(--stage);
+    color:var(--text);
+    font-family:Arial, Helvetica, sans-serif;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+  }
+  header{
+    padding:14px 20px;
+    border-bottom:1px solid #2A2B2E;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .mark{
+    font-weight:bold;
+    letter-spacing:2px;
+    font-size:14px;
+  }
+  .mark span{color:var(--red);}
+  main{
+    width:100%;
+    max-width:1180px;
+    margin:0 auto;
+    padding:22px 16px 40px;
+    flex:1;
+  }
+  .eyebrow{
+    color:var(--red);
+    font-size:12px;
+    letter-spacing:3px;
+    text-transform:uppercase;
+    font-weight:bold;
+  }
+  h1{
+    font-size:34px;
+    line-height:1.1;
+    margin:6px 0 4px;
+  }
+  .vtitle{
+    color:var(--muted);
+    font-size:16px;
+    margin-bottom:18px;
+  }
+  .frame{
+    background:#000;
+    border-radius:10px;
+    overflow:hidden;
+    border:1px solid #2A2B2E;
+    position:relative;
+  }
+  .wm{
+    position:absolute;
+    top:10px;
+    right:12px;
+    z-index:2;
+    pointer-events:none;
+    text-align:right;
+    font-size:12px;
+    line-height:1.45;
+    color:rgba(255,255,255,0.92);
+    text-shadow:0 1px 3px rgba(0,0,0,0.9);
+    background:rgba(0,0,0,0.35);
+    padding:4px 8px;
+    border-radius:5px;
+  }
+  .wm strong{letter-spacing:0.3px;}
+  video{
+    display:block;
+    width:100%;
+    max-height:82vh;
+    aspect-ratio:16/9;
+    background:#000;
+  }
+  .after{
+    margin-top:22px;
+    background:var(--card);
+    border:1px solid #2A2B2E;
+    border-radius:10px;
+    padding:18px;
+  }
+  .after p{
+    color:var(--text);
+    font-size:15px;
+    margin-bottom:14px;
+  }
+  .actions{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  .btn{
+    flex:1;
+    min-width:130px;
+    text-align:center;
+    text-decoration:none;
+    padding:13px 16px;
+    border-radius:8px;
+    font-size:15px;
+    font-weight:bold;
+  }
+  .btn.call{background:var(--red);color:#fff;}
+  .btn.text{background:#2A2B2E;color:#fff;border:1px solid #3A3B3E;}
+  footer{
+    padding:16px 20px 26px;
+    text-align:center;
+    color:var(--muted);
+    font-size:12.5px;
+    line-height:1.6;
+  }
+  /* ---- space horizon + blue grid background ---- */
+  .bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;
+    background:radial-gradient(ellipse 90% 60% at 50% 66%,#0b2f52 0%,#061a30 35%,#030b16 65%,#000306 100%);}
+  .bg .stars{position:absolute;inset:0;opacity:.8;
+    background-image:
+      radial-gradient(1.5px 1.5px at 8% 12%,#fff 100%,transparent 0),radial-gradient(1px 1px at 19% 31%,#bfe8ff 100%,transparent 0),
+      radial-gradient(1px 1px at 27% 8%,#fff 100%,transparent 0),radial-gradient(1.5px 1.5px at 36% 44%,#9fdcff 100%,transparent 0),
+      radial-gradient(1px 1px at 44% 19%,#fff 100%,transparent 0),radial-gradient(1px 1px at 52% 5%,#bfe8ff 100%,transparent 0),
+      radial-gradient(2px 2px at 61% 27%,#fff 100%,transparent 0),radial-gradient(1px 1px at 69% 40%,#9fdcff 100%,transparent 0),
+      radial-gradient(1px 1px at 77% 14%,#fff 100%,transparent 0),radial-gradient(1.5px 1.5px at 86% 33%,#bfe8ff 100%,transparent 0),
+      radial-gradient(1px 1px at 93% 7%,#fff 100%,transparent 0),radial-gradient(1px 1px at 14% 52%,#fff 100%,transparent 0),
+      radial-gradient(1px 1px at 33% 58%,#bfe8ff 100%,transparent 0),radial-gradient(1.5px 1.5px at 58% 55%,#fff 100%,transparent 0),
+      radial-gradient(1px 1px at 81% 50%,#9fdcff 100%,transparent 0),radial-gradient(1px 1px at 97% 46%,#fff 100%,transparent 0),
+      radial-gradient(1px 1px at 4% 38%,#bfe8ff 100%,transparent 0),radial-gradient(1px 1px at 48% 36%,#fff 100%,transparent 0),
+      radial-gradient(1px 1px at 72% 3%,#9fdcff 100%,transparent 0),radial-gradient(1px 1px at 24% 22%,#fff 100%,transparent 0);
+    -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 55%,transparent 66%);
+    mask-image:linear-gradient(to bottom,#000 0%,#000 55%,transparent 66%);}
+  .bg .nebula{position:absolute;left:-10%;right:-10%;top:0;height:70%;
+    background:radial-gradient(ellipse 40% 45% at 22% 30%,rgba(40,120,220,.18),transparent 70%),
+               radial-gradient(ellipse 45% 40% at 78% 22%,rgba(20,170,255,.14),transparent 70%);filter:blur(30px);}
+  .bg .planet{position:absolute;left:50%;top:66%;width:220vw;height:220vw;max-width:3200px;max-height:3200px;transform:translateX(-50%);border-radius:50%;
+    background:radial-gradient(circle at 50% 0%,#0c2f52 0%,#071a30 10%,#030b16 26%,#000306 55%);
+    border-top:2px solid rgba(215,245,255,.95);
+    box-shadow:0 -8px 40px rgba(60,190,255,.75),0 -2px 10px rgba(220,248,255,1),0 -60px 200px rgba(20,140,230,.45),0 -140px 320px rgba(10,110,200,.25);}
+  .bg .grid{position:absolute;left:-30%;right:-30%;top:66%;bottom:-10%;transform-origin:50% 0;transform:perspective(520px) rotateX(58deg);
+    background:linear-gradient(rgba(53,214,255,.5) 2px,transparent 2px),linear-gradient(90deg,rgba(53,214,255,.5) 2px,transparent 2px);background-size:120px 120px;
+    -webkit-mask-image:linear-gradient(to bottom,transparent 0%,rgba(0,0,0,.85) 30%,rgba(0,0,0,.85) 70%,transparent 100%);
+    mask-image:linear-gradient(to bottom,transparent 0%,rgba(0,0,0,.85) 30%,rgba(0,0,0,.85) 70%,transparent 100%);}
+  .bg .glow{position:absolute;left:0;right:0;top:calc(66% - 120px);height:180px;
+    background:radial-gradient(ellipse 55% 60% at 50% 100%,rgba(53,214,255,.35),transparent 70%);filter:blur(14px);}
+  header,main,footer{position:relative;z-index:1;}
+  @media (max-width:480px){
+    h1{font-size:27px;}
+  }
+</style>
+</head>
+<body>
+<div class="bg" aria-hidden="true"><div class="nebula"></div><div class="stars"></div><div class="glow"></div><div class="planet"></div><div class="grid"></div></div>
+<header>
+  <div class="mark">VECTOR <span>VX</span></div>
+</header>
+
+<main>
+  <div class="eyebrow" id="eyebrow">A video for</div>
+  <h1 id="clientName">You</h1>
+  <div class="vtitle" id="videoTitle"></div>
+
+  <div class="frame">
+    <video id="player" controls playsinline preload="metadata"></video>
+    <div class="wm"><strong>Josh Hicks</strong><br>319-631-1461</div>
+  </div>
+
+  <div class="after">
+    <p id="afterMsg">Questions after you watch? I'm one tap away.</p>
+    <div class="actions">
+      <a class="btn call" href="tel:3196311461">Call Josh</a>
+      <a class="btn text" href="sms:3196311461">Text Josh</a>
+    </div>
+  </div>
+</main>
+
+<footer>
+  Josh Hicks &middot; 319-631-1461
+</footer>
+
+<script>
+/* ================= CONFIG =================
+   Tracking posts to a Google Form. Until the
+   real IDs are pasted below, tracking is off
+   and the page still plays video normally.
+============================================ */
+var TRACK = {
+  FORM_ID: "PASTE_FORM_ID_HERE",
+  ENTRY_CLIENT: "entry.1111111111",
+  ENTRY_VIDEO:  "entry.2222222222",
+  ENTRY_EVENT:  "entry.3333333333",
+  ENTRY_PERCENT:"entry.4444444444"
+};
+
+function getParam(name){
+  return new URLSearchParams(window.location.search).get(name) || "";
+}
+
+var client = getParam("c");
+var title  = getParam("t");
+var vsrc   = getParam("v");
+
+if (client){
+  document.getElementById("clientName").textContent = client;
+  document.title = "A video for " + client + " — Josh Hicks";
+} else {
+  document.getElementById("eyebrow").textContent = "A video from Josh";
+  document.getElementById("clientName").textContent = "Vector VX";
+}
+if (title){
+  document.getElementById("videoTitle").textContent = title;
+}
+
+var player = document.getElementById("player");
+if (vsrc){
+  player.src = vsrc; // filename in this repo, or a full https:// URL
+} else {
+  document.querySelector(".frame").style.display = "none";
+  document.getElementById("afterMsg").textContent =
+    "This video link is missing its video. Call or text me and I'll resend it.";
+}
+
+/* ---------- tracking ---------- */
+var trackingOn = TRACK.FORM_ID.indexOf("PASTE_") === -1;
+var sent = {};
+var videoLabel = title || ((vsrc.split("/").pop() || "unknown").split("?")[0]);
+
+function beacon(eventName, percent){
+  if (!trackingOn || sent[eventName]) return;
+  sent[eventName] = true;
+  var url = "https://docs.google.com/forms/d/e/" + TRACK.FORM_ID + "/formResponse";
+  var data = new FormData();
+  data.append(TRACK.ENTRY_CLIENT,  client || "unknown");
+  data.append(TRACK.ENTRY_VIDEO,   videoLabel);
+  data.append(TRACK.ENTRY_EVENT,   eventName);
+  data.append(TRACK.ENTRY_PERCENT, String(percent));
+  if (navigator.sendBeacon){
+    navigator.sendBeacon(url, data);
+  } else {
+    fetch(url, {method:"POST", mode:"no-cors", body:data, keepalive:true});
+  }
+}
+
+beacon("Opened", 0);
+
+player.addEventListener("play", function(){ beacon("Started", 1); });
+
+player.addEventListener("timeupdate", function(){
+  if (!player.duration) return;
+  var pct = (player.currentTime / player.duration) * 100;
+  if (pct >= 95){ beacon("Completed", 100); }
+  else if (pct >= 75){ beacon("Watched 75%", 75); }
+  else if (pct >= 50){ beacon("Watched 50%", 50); }
+  else if (pct >= 25){ beacon("Watched 25%", 25); }
+});
+
+player.addEventListener("ended", function(){ beacon("Completed", 100); });
+</script>
+</body>
+</html>
