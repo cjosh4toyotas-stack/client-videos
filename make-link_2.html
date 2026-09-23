@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>VECTOR VX — Video Exchange System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;800&family=Exo+2:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cyan:#35d6ff;--cyan2:#9ceeff;--glow:#0aa8ff;--deep:#020914;--ink:#000306;
+  --panel:rgba(5,16,30,.72);--line:rgba(70,200,255,.32);--text:#eefaff;--muted:#8fb6c8;
+  --green:#5cf5c0;--red:#ff6a80;
+  --display:"Orbitron",ui-sans-serif,sans-serif;--body:"Exo 2",ui-sans-serif,-apple-system,"Segoe UI",Arial,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:var(--ink)}
+body{min-height:100vh;color:var(--text);font-family:var(--body);overflow-x:hidden;position:relative;background:var(--ink)}
+
+/* ============ SCENE ============ */
+.scene{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;
+  background:radial-gradient(ellipse 80% 55% at 50% 40%,#0a2946 0%,#04121f 45%,#000306 100%)}
+.scene .stars{position:absolute;inset:0;opacity:.55;
+  background-image:radial-gradient(1px 1px at 12% 18%,#9ce 100%,transparent 0),radial-gradient(1px 1px at 33% 9%,#bdf 100%,transparent 0),radial-gradient(1.5px 1.5px at 68% 14%,#9ce 100%,transparent 0),radial-gradient(1px 1px at 84% 26%,#bdf 100%,transparent 0),radial-gradient(1px 1px at 51% 22%,#fff 100%,transparent 0),radial-gradient(1px 1px at 24% 33%,#9ce 100%,transparent 0),radial-gradient(1.5px 1.5px at 76% 38%,#bdf 100%,transparent 0),radial-gradient(1px 1px at 42% 5%,#fff 100%,transparent 0),radial-gradient(1px 1px at 91% 8%,#9ce 100%,transparent 0),radial-gradient(1px 1px at 6% 41%,#bdf 100%,transparent 0);
+  mask-image:linear-gradient(to bottom,#000 0%,#000 45%,transparent 62%)}
+/* planet horizon */
+.scene .planet{position:absolute;left:50%;top:46vh;width:190vw;height:190vw;max-width:2600px;max-height:2600px;transform:translateX(-50%);border-radius:50%;
+  background:radial-gradient(circle at 50% 0%,#0b2a49 0%,#06182b 12%,#020a14 30%,#000306 60%);
+  box-shadow:0 -8px 50px rgba(60,190,255,.7),0 -2px 10px rgba(200,240,255,1),0 -60px 220px rgba(20,140,230,.45);
+  border-top:2px solid rgba(220,248,255,.95)}
+.scene .haze{position:absolute;left:0;right:0;top:34vh;height:26vh;background:radial-gradient(ellipse 60% 100% at 50% 100%,rgba(40,170,255,.28),transparent 70%)}
+/* floor */
+.scene .floor{position:absolute;left:0;right:0;top:56vh;bottom:0;
+  background:linear-gradient(180deg,#02101c 0%,#010812 40%,#000306 100%)}
+.scene .floor:before{content:"";position:absolute;inset:0;
+  background:linear-gradient(rgba(60,200,255,.26) 1px,transparent 1px),linear-gradient(90deg,rgba(60,200,255,.26) 1px,transparent 1px);
+  background-size:140px 140px;transform:perspective(600px) rotateX(62deg) scale(2.2);transform-origin:50% 0;
+  mask-image:linear-gradient(to bottom,rgba(0,0,0,.9),transparent 90%)}
+.scene .floor:after{content:"";position:absolute;left:0;right:0;top:0;height:1px;background:linear-gradient(90deg,transparent,var(--cyan) 30%,#fff 50%,var(--cyan) 70%,transparent);
+  box-shadow:0 0 18px var(--cyan),0 0 60px var(--glow);opacity:.9}
+/* reflections on floor */
+.scene .refl{position:absolute;top:56vh;bottom:0;width:26vw;
+  background:linear-gradient(180deg,rgba(50,190,255,.28),rgba(30,140,230,.08) 50%,transparent 90%);
+  filter:blur(18px)}
+.scene .refl.l{left:2vw}.scene .refl.r{right:2vw}
+/* neon pillars */
+.pillar{position:absolute;top:0;bottom:0;width:22vw;max-width:340px}
+.pillar.l{left:0}.pillar.r{right:0;transform:scaleX(-1)}
+.pillar i{position:absolute;display:block;background:#bff4ff;box-shadow:0 0 6px #fff,0 0 16px #8ee8ff,0 0 40px var(--cyan),0 0 110px var(--glow);opacity:1}
+.pillar .a{left:26px;top:4vh;bottom:34vh;width:5px;border-radius:4px}
+.pillar .b{left:64px;top:0;bottom:42vh;width:3px;border-radius:3px;opacity:.6;transform:skewX(7deg);transform-origin:top}
+.pillar .c{left:10px;top:66vh;width:42%;height:4px;border-radius:3px;transform:rotate(-24deg);transform-origin:left;opacity:.85}
+.pillar .d{left:22px;top:72vh;width:60%;height:2px;border-radius:2px;opacity:.5}
+.pillar .wall{position:absolute;left:0;top:0;bottom:0;width:100%;
+  background:linear-gradient(90deg,rgba(6,20,36,.95),rgba(6,20,36,.35) 45%,transparent);
+  border-right:1px solid rgba(60,200,255,.10)}
+.pillar .frame{position:absolute;left:36px;top:12vh;bottom:40vh;width:30%;border:1px solid rgba(60,200,255,.16);border-left:none;border-radius:0 40px 0 0}
+.vignette{position:absolute;inset:0;background:radial-gradient(ellipse 70% 80% at 50% 50%,transparent 40%,rgba(0,3,6,.75) 100%)}
+
+/* ============ PAGE ============ */
+.page{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:26px 44px;font-family:var(--display);font-size:10px;letter-spacing:.42em;text-transform:uppercase;color:#bfe6f3}
+.topbar nav{display:flex;gap:34px}
+.topbar nav a{color:inherit;text-decoration:none;opacity:.85;transition:.2s}
+.topbar nav a:hover{opacity:1;color:var(--cyan);text-shadow:0 0 10px rgba(53,214,255,.6)}
+.topbar .right{display:flex;align-items:center;gap:28px}
+.status{display:flex;align-items:center;gap:9px}
+.status i{width:7px;height:7px;border-radius:50%;background:#3a5664}
+.status.on i{background:var(--green);box-shadow:0 0 10px var(--green)}
+.status.off i{background:var(--red);box-shadow:0 0 10px var(--red)}
+.burger{width:26px;height:18px;position:relative;cursor:pointer;background:none;border:0;box-shadow:none;padding:0}
+.burger:before,.burger:after,.burger span{content:"";position:absolute;left:0;right:0;height:2px;background:#cfeefa;border-radius:2px}
+.burger:before{top:0}.burger span{top:8px}.burger:after{bottom:0}
+.menu{display:none;position:absolute;right:44px;top:66px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px;backdrop-filter:blur(14px);z-index:5;min-width:220px}
+.menu.open{display:block}
+.menu a{display:block;padding:11px 14px;color:#cfeefa;text-decoration:none;font-family:var(--display);font-size:10px;letter-spacing:.3em;text-transform:uppercase;border-radius:6px}
+.menu a:hover{background:rgba(53,214,255,.10);color:var(--cyan)}
+
+.brand{text-align:center;padding:5vh 16px 26px}
+.logo{font-family:var(--display);font-weight:800;font-size:clamp(46px,9vw,118px);letter-spacing:.06em;line-height:1;color:#f6fdff;
+  text-shadow:0 0 14px rgba(190,240,255,.45),0 0 48px rgba(60,190,255,.35)}
+.logo .vx{color:transparent;-webkit-text-stroke:2.5px var(--cyan);text-shadow:0 0 12px rgba(53,214,255,.9),0 0 34px rgba(53,214,255,.6),0 0 80px rgba(10,168,255,.5)}
+.system{margin-top:14px;font-family:var(--display);font-weight:500;font-size:clamp(12px,2vw,21px);letter-spacing:.5em;text-transform:uppercase;color:#f0fbff;text-shadow:0 0 16px rgba(53,214,255,.35)}
+.author{display:flex;align-items:center;justify-content:center;gap:26px;margin-top:14px;font-family:var(--display);font-weight:400;font-size:clamp(11px,1.4vw,17px);letter-spacing:.24em;color:#e6f7ff}
+.author:before,.author:after{content:"";width:clamp(60px,14vw,190px);height:1px;background:linear-gradient(90deg,transparent,var(--cyan));box-shadow:0 0 8px rgba(53,214,255,.6)}
+.author:after{transform:scaleX(-1)}
+.tag{margin-top:30px;font-family:var(--display);color:var(--cyan);font-size:clamp(10px,1.2vw,13px);letter-spacing:.6em;text-transform:uppercase;text-shadow:0 0 12px rgba(53,214,255,.6)}
+
+.shell{width:100%;max-width:760px;margin:0 auto;padding:0 18px}
+.panel{background:linear-gradient(180deg,rgba(6,20,36,.82),rgba(3,12,24,.9));border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:18px;
+  box-shadow:0 0 0 1px rgba(0,0,0,.6),0 30px 80px rgba(0,0,0,.6),0 0 40px rgba(20,150,255,.08),inset 0 0 50px rgba(20,140,230,.04);backdrop-filter:blur(18px);position:relative}
+.panel-title{font-family:var(--display);font-size:9.5px;letter-spacing:.36em;text-transform:uppercase;color:var(--cyan2);margin-bottom:14px}
+.setupcopy{font-size:14px;line-height:1.6;color:var(--muted);margin-bottom:6px}
+
+/* drop */
+.drop{border:1.5px dashed rgba(90,220,255,.75);border-radius:10px;padding:38px 18px 34px;text-align:center;cursor:pointer;transition:.2s;
+  background:radial-gradient(ellipse at 50% 30%,rgba(29,170,255,.10),transparent 65%)}
+.drop:hover,.drop.over{border-color:#bff3ff;background:radial-gradient(ellipse at 50% 30%,rgba(29,170,255,.20),transparent 65%);box-shadow:inset 0 0 50px rgba(53,214,255,.08),0 0 30px rgba(53,214,255,.12)}
+.drop.busy{pointer-events:none;opacity:.55}
+.drop svg{width:96px;height:78px;display:block;margin:0 auto 22px;stroke:#bfefff;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 10px rgba(53,214,255,.7))}
+.drop strong{display:block;font-family:var(--display);font-weight:500;font-size:clamp(11px,1.6vw,15px);letter-spacing:.32em;text-transform:uppercase;color:#f2fcff}
+.drop .or{margin:16px 0 14px;font-family:var(--display);font-size:9px;letter-spacing:.5em;color:#9ed6e8}
+.drop .small{margin-top:14px;font-size:11.5px;color:var(--muted);letter-spacing:.06em}
+
+button{font-family:var(--display);border:1.5px solid var(--cyan);background:rgba(4,30,52,.72);color:#d9f7ff;border-radius:8px;padding:13px 22px;font-weight:500;letter-spacing:.32em;text-transform:uppercase;font-size:11px;cursor:pointer;
+  box-shadow:0 0 14px rgba(53,214,255,.35),inset 0 0 14px rgba(53,214,255,.08);transition:.2s}
+button:hover{background:rgba(17,120,170,.45);box-shadow:0 0 26px rgba(53,214,255,.55),inset 0 0 18px rgba(53,214,255,.14);color:#fff}
+.browse{min-width:230px}
+.primary,.setupbtn{width:100%;margin-top:16px}
+
+.fileinfo{display:none;margin-top:16px;padding:12px 14px;border:1px solid rgba(80,188,224,.22);border-radius:10px;background:rgba(1,9,15,.6);font-size:13px;color:#cfeefa;justify-content:space-between;gap:12px}
+.fileinfo .fname{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.fileinfo .fsize{color:var(--muted);flex-shrink:0}
+.progress{display:none;margin-top:12px;height:6px;background:#071a27;border-radius:5px;overflow:hidden}
+.progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,#0a8fd0,var(--cyan),var(--cyan2));box-shadow:0 0 12px var(--cyan);transition:width .2s;position:relative}
+.progress i:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);animation:sweep 1.2s linear infinite}
+@keyframes sweep{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
+.stats{display:none;margin-top:10px;grid-template-columns:repeat(4,1fr);gap:8px}
+.stat{padding:10px;border:1px solid rgba(80,188,224,.16);border-radius:8px;background:rgba(1,9,15,.5)}
+.stat b{display:block;font-family:var(--display);font-size:14px;font-weight:600;color:var(--cyan2);font-variant-numeric:tabular-nums}
+.stat span{display:block;margin-top:4px;font-family:var(--display);font-size:8px;letter-spacing:.24em;text-transform:uppercase;color:#6f96a6}
+.upstatus{display:none;margin-top:12px;font-size:13px;color:var(--muted)}.upstatus.ok{color:var(--green)}.upstatus.err{color:var(--red)}
+.tiny{font-size:11px;color:#5d8494;margin-top:12px}.tiny a{color:#7fc9e4;text-decoration:none}
+
+.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.field.full{grid-column:1/-1}
+label{display:block;font-family:var(--display);font-size:8.5px;letter-spacing:.3em;text-transform:uppercase;color:#9ad2e6;margin:0 0 7px}
+input[type=text],input[type=password]{width:100%;padding:13px 14px;border-radius:8px;border:1px solid rgba(80,188,224,.25);background:rgba(1,9,15,.74);color:#eafaff;outline:none;font-size:15px;font-family:var(--body);transition:.2s}
+input:focus{border-color:var(--cyan);box-shadow:0 0 0 2px rgba(41,217,255,.08),0 0 20px rgba(41,217,255,.15)}
+.hint{font-size:11px;color:#6b90a0;margin-top:6px;line-height:1.45}
+.out{display:none}
+.out h2{font-family:var(--display);font-size:8.5px;letter-spacing:.3em;text-transform:uppercase;color:#9ad2e6;margin:4px 0 8px}
+.box{background:rgba(1,9,15,.8);border:1px solid rgba(80,188,224,.25);border-radius:8px;padding:13px;color:#cfeefa;font-size:13px;line-height:1.55;word-break:break-all}
+.msgbox{white-space:pre-wrap;word-break:normal;overflow-wrap:anywhere}
+.btnrow{display:flex;gap:8px;margin-top:8px}.btnrow button,.copy{flex:1;width:100%}
+.copy.solo{margin-top:8px}.ghost{border-color:rgba(80,188,224,.4);background:transparent;box-shadow:none;color:#9ad2e6}
+.spacer{height:18px}
+
+.features{max-width:900px;margin:22px auto 0;padding:0 18px;display:grid;grid-template-columns:repeat(4,1fr)}
+.feat{text-align:center;padding:14px 8px;border-left:1px solid rgba(60,200,255,.25)}
+.feat:first-child{border-left:0}
+.feat svg{width:34px;height:34px;stroke:var(--cyan);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 8px rgba(53,214,255,.7));margin-bottom:12px}
+.feat span{display:block;font-family:var(--display);font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:#e6f7ff}
+.footer{margin-top:auto;padding:34px 44px 26px;display:flex;justify-content:space-between;align-items:flex-end;font-family:var(--display);font-size:8.5px;letter-spacing:.42em;text-transform:uppercase;color:#7fa9bb;line-height:1.9}
+.footer .lines{display:flex;align-items:flex-end;gap:14px}
+.footer .lines:after{content:"";width:60px;height:1px;background:var(--cyan);margin-bottom:9px;box-shadow:0 0 8px var(--cyan)}
+
+@media(max-width:760px){
+  .topbar{padding:18px 16px}.topbar nav{display:none}.topbar .right{gap:16px}.menu{right:16px;top:56px}
+  .pillar{width:14vw}.pillar .frame{display:none}
+  .brand{padding-top:4vh}.formgrid{grid-template-columns:1fr}.field.full{grid-column:auto}
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .features{grid-template-columns:repeat(2,1fr);row-gap:6px}.feat:nth-child(3){border-left:0}
+  .footer{padding:26px 16px 22px;flex-direction:column;align-items:flex-start;gap:10px}
+}
+</style>
+</head>
+<body>
+<div class="scene" aria-hidden="true">
+  <div class="stars"></div>
+  <div class="haze"></div>
+  <div class="planet"></div>
+  <div class="floor"></div>
+  <div class="refl l"></div><div class="refl r"></div>
+  <div class="pillar l"><div class="wall"></div><div class="frame"></div><i class="a"></i><i class="b"></i><i class="c"></i><i class="d"></i></div>
+  <div class="pillar r"><div class="wall"></div><div class="frame"></div><i class="a"></i><i class="b"></i><i class="c"></i><i class="d"></i></div>
+  <div class="vignette"></div>
+</div>
+
+<div class="page">
+  <header class="topbar">
+    <nav><a href="#transfer">Transfer</a><a href="#share">Share</a><a href="#client">Create</a><a href="views.html">Further</a></nav>
+    <div class="right">
+      <div class="status" id="statusPill"><i></i><span id="statusText">Storage</span></div>
+      <span class="by">By Josh Hicks</span>
+      <button class="burger" type="button" aria-label="Menu" onclick="document.getElementById('menu').classList.toggle('open')"><span></span></button>
+    </div>
+    <div class="menu" id="menu">
+      <a href="#transfer">Transfer a video</a>
+      <a href="views.html">View tracking</a>
+      <a href="index.html">Client landing page</a>
+      <a href="#" onclick="forgetCreds(event)">Disconnect storage</a>
+    </div>
+  </header>
+
+  <section class="brand">
+    <div class="logo">VECTOR <span class="vx">VX</span></div>
+    <div class="system">Video Exchange System</div>
+    <div class="author">by Josh Hicks</div>
+    <div class="tag">Move Ideas Further</div>
+  </section>
+
+  <main class="shell" id="transfer">
+    <section class="panel" id="setupCard" style="display:none">
+      <div class="panel-title">Secure Storage Connection</div>
+      <p class="setupcopy">One-time setup on this device. Your Cloudflare storage keys stay saved only in this browser.</p>
+      <div class="formgrid" style="margin-top:14px">
+        <div class="field"><label for="inKey">Access Key ID</label><input type="text" id="inKey" autocomplete="off"></div>
+        <div class="field"><label for="inSecret">Secret Access Key</label><input type="password" id="inSecret" autocomplete="off"></div>
+        <div class="field full"><label for="inPub">Public URL</label><input type="text" id="inPub" placeholder="https://pub-xxxxxxxx.r2.dev"></div>
+      </div>
+      <button class="setupbtn" onclick="saveCreds()">Connect Vector VX</button>
+    </section>
+
+    <section class="panel" id="dropCard" style="display:none">
+      <div class="drop" id="drop">
+        <svg viewBox="0 0 96 78"><path d="M28 62H24a16 16 0 0 1-2-31.8A22 22 0 0 1 64.5 25 15 15 0 0 1 72 62h-4"/><path d="M48 66V38"/><path d="M37 49l11-11 11 11"/></svg>
+        <strong>Drag &amp; Drop Your Videos Here</strong>
+        <div class="or">OR</div>
+        <button class="browse" type="button">Browse Files</button>
+        <div class="small">.mp4 or .m4v · large 60fps files supported</div>
+      </div>
+      <input type="file" id="fileInput" accept="video/mp4,video/x-m4v,.mp4,.m4v" style="display:none">
+      <div class="fileinfo" id="fileInfo"><span class="fname" id="fName"></span><span class="fsize" id="fSize"></span></div>
+      <div class="progress" id="prog"><i id="progBar"></i></div>
+      <div class="stats" id="stats">
+        <div class="stat"><b id="stPct">0%</b><span>Complete</span></div>
+        <div class="stat"><b id="stSent">0 MB</b><span>Sent</span></div>
+        <div class="stat"><b id="stSpeed">—</b><span>Speed</span></div>
+        <div class="stat"><b id="stEta">—</b><span>Time left</span></div>
+      </div>
+      <div class="upstatus" id="upstatus"></div>
+      <div class="tiny">Storage connected on this device · <a href="#" onclick="forgetCreds(event)">disconnect</a></div>
+    </section>
+
+    <section class="panel" id="client">
+      <div class="panel-title">Client Info</div>
+      <div class="formgrid">
+        <div class="field full"><label for="vfile">Video File</label><input type="text" id="vfile" placeholder="bailey-highlander.mp4"><div class="hint">Fills automatically after upload. You can also enter an existing filename or full https:// URL.</div></div>
+        <div class="field"><label for="cname">Client First Name</label><input type="text" id="cname" placeholder="Bailey"></div>
+        <div class="field"><label for="vtitle">Video Title</label><input type="text" id="vtitle" placeholder="2026 Highlander XLE"></div>
+      </div>
+      <button class="primary" onclick="build()">Generate Transfer Link</button>
+    </section>
+
+    <section class="panel out" id="out">
+      <a id="share"></a>
+      <div class="panel-title">Transfer Ready</div>
+      <h2>Share Link</h2>
+      <div class="box" id="linkBox"></div>
+      <div class="btnrow"><button onclick="copyText('linkBox', this)">Copy Link</button><button class="ghost" onclick="window.open(document.getElementById('linkBox').textContent,'_blank')">Preview</button></div>
+      <div class="spacer"></div>
+      <h2>Ready-to-Send Text</h2>
+      <div class="box msgbox" id="msgBox"></div>
+      <button class="copy solo" onclick="copyText('msgBox', this)">Copy Message</button>
+    </section>
+  </main>
+
+  <section class="features">
+    <div class="feat"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M13 6l-4 7h4l-1 5 4-7h-4z"/></svg><span>Fast Transfers</span></div>
+    <div class="feat"><svg viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/><circle cx="12" cy="15.5" r="1.2"/></svg><span>Secure Sharing</span></div>
+    <div class="feat"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><circle cx="16.5" cy="9.5" r="2.5"/><path d="M3 20a6 6 0 0 1 12 0"/><path d="M14.5 15.5A4.5 4.5 0 0 1 21 20"/></svg><span>Anywhere Access</span></div>
+    <div class="feat"><svg viewBox="0 0 24 24"><path d="M12 4l9 4.5-9 4.5-9-4.5z"/><path d="M3 13l9 4.5 9-4.5"/><path d="M3 17l9 4.5 9-4.5"/></svg><span>Built for Creators</span></div>
+  </section>
+
+  <footer class="footer">
+    <div class="lines"><div>Videos Today<br>A Brighter Tomorrow</div></div>
+    <div>Vector VX</div>
+  </footer>
+</div>
+<script>
+/* ================= CONFIG ================= */
+var ACCOUNT_ID = "ee08483725cbf0f4b7f8022b9d149c50";
+var BUCKET = "client-videos";
+var BASE_URL = "https://cjosh4toyotas-stack.github.io/client-videos/";
+var K_KEY = "cv_r2_key", K_SECRET = "cv_r2_secret", K_PUB = "cv_r2_pub";
+/* ========================================== */
+
+function creds(){
+  return {
+    key: localStorage.getItem(K_KEY) || "",
+    secret: localStorage.getItem(K_SECRET) || "",
+    pub: (localStorage.getItem(K_PUB) || "").replace(/\/+$/,"")
+  };
+}
+function connected(){ var c = creds(); return c.key && c.secret && c.pub; }
+
+function showState(){
+  document.getElementById("setupCard").style.display = connected() ? "none" : "block";
+  document.getElementById("dropCard").style.display  = connected() ? "block" : "none";
+  var pill = document.getElementById("statusPill");
+  pill.className = "status " + (connected() ? "on" : "off");
+  document.getElementById("statusText").textContent = connected() ? "Storage online" : "Storage offline";
+}
+showState();
+
+function saveCreds(){
+  var k = document.getElementById("inKey").value.trim();
+  var s = document.getElementById("inSecret").value.trim();
+  var p = document.getElementById("inPub").value.trim();
+  if (!k || !s || !p){ alert("All three values are needed."); return; }
+  if (p.indexOf("https://") !== 0){ alert("The Public URL should start with https://"); return; }
+  localStorage.setItem(K_KEY, k);
+  localStorage.setItem(K_SECRET, s);
+  localStorage.setItem(K_PUB, p);
+  document.getElementById("inKey").value = "";
+  document.getElementById("inSecret").value = "";
+  document.getElementById("inPub").value = "";
+  showState();
+}
+
+function forgetCreds(e){
+  e.preventDefault();
+  localStorage.removeItem(K_KEY);
+  localStorage.removeItem(K_SECRET);
+  localStorage.removeItem(K_PUB);
+  showState();
+}
+
+/* ---------- SigV4 presigned URL (WebCrypto) ---------- */
+function strBytes(s){ return new TextEncoder().encode(s); }
+function hex(buf){
+  return Array.prototype.map.call(new Uint8Array(buf), function(b){
+    return ("0" + b.toString(16)).slice(-2);
+  }).join("");
+}
+function hmac(keyBytes, msg){
+  return crypto.subtle.importKey("raw", keyBytes, {name:"HMAC", hash:"SHA-256"}, false, ["sign"])
+    .then(function(k){ return crypto.subtle.sign("HMAC", k, strBytes(msg)); });
+}
+function sha256hex(s){
+  return crypto.subtle.digest("SHA-256", strBytes(s)).then(hex);
+}
+function enc(s){
+  return encodeURIComponent(s).replace(/[!'()*]/g, function(c){
+    return "%" + c.charCodeAt(0).toString(16).toUpperCase();
+  });
+}
+
+function presign(opts){
+  var u = new URL(opts.url);
+  var amzdate = opts.datetime; // YYYYMMDDTHHMMSSZ
+  var datestamp = amzdate.slice(0,8);
+  var region = opts.region;
+  var scope = datestamp + "/" + region + "/s3/aws4_request";
+  var params = {
+    "X-Amz-Algorithm": "AWS4-HMAC-SHA256",
+    "X-Amz-Credential": opts.accessKeyId + "/" + scope,
+    "X-Amz-Date": amzdate,
+    "X-Amz-Expires": String(opts.expires),
+    "X-Amz-SignedHeaders": "host"
+  };
+  var qs = Object.keys(params).sort().map(function(k){
+    return enc(k) + "=" + enc(params[k]);
+  }).join("&");
+  var canonical = [
+    opts.method,
+    u.pathname,
+    qs,
+    "host:" + u.host + "\n",
+    "host",
+    "UNSIGNED-PAYLOAD"
+  ].join("\n");
+  return sha256hex(canonical).then(function(chash){
+    var sts = ["AWS4-HMAC-SHA256", amzdate, scope, chash].join("\n");
+    return hmac(strBytes("AWS4" + opts.secretAccessKey), datestamp)
+      .then(function(k){ return hmac(k, region); })
+      .then(function(k){ return hmac(k, "s3"); })
+      .then(function(k){ return hmac(k, "aws4_request"); })
+      .then(function(k){ return hmac(k, sts); })
+      .then(function(sig){
+        return opts.url + "?" + qs + "&X-Amz-Signature=" + hex(sig);
+      });
+  });
+}
+
+/* ---------- fast-start: move the MP4 index (moov) to the front so phones start playing right away ---------- */
+function readBytes(blob, start, end){
+  return blob.slice(start, end).arrayBuffer();
+}
+function boxType(dv, o){
+  return String.fromCharCode(dv.getUint8(o+4), dv.getUint8(o+5), dv.getUint8(o+6), dv.getUint8(o+7));
+}
+function topAtoms(file){
+  var atoms = [];
+  function next(off){
+    if (off + 8 > file.size) return Promise.resolve(atoms);
+    return readBytes(file, off, off + 16).then(function(buf){
+      var dv = new DataView(buf);
+      var size = dv.getUint32(0), hdr = 8;
+      if (size === 1){ size = Number(dv.getBigUint64(8)); hdr = 16; }
+      else if (size === 0){ size = file.size - off; }
+      if (size < hdr) return atoms; // malformed — stop scanning
+      atoms.push({type: boxType(dv, 0), start: off, size: size});
+      return next(off + size);
+    });
+  }
+  return next(0);
+}
+function patchOffsets(dv, start, end, delta){
+  var CONTAINERS = {moov:1, trak:1, mdia:1, minf:1, stbl:1};
+  var o = start;
+  while (o + 8 <= end){
+    var size = dv.getUint32(o), hdr = 8;
+    if (size === 1){ size = Number(dv.getBigUint64(o + 8)); hdr = 16; }
+    else if (size === 0){ size = end - o; }
+    if (size < hdr || o + size > end) return false;
+    var t = boxType(dv, o);
+    if (CONTAINERS[t]){
+      if (!patchOffsets(dv, o + hdr, o + size, delta)) return false;
+    } else if (t === "stco"){
+      var n = dv.getUint32(o + hdr + 4);
+      for (var i = 0; i < n; i++){
+        var p = o + hdr + 8 + i * 4, v = dv.getUint32(p) + delta;
+        if (v > 0xFFFFFFFF) return false; // would overflow 32-bit offsets — leave file as-is
+        dv.setUint32(p, v);
+      }
+    } else if (t === "co64"){
+      var m = dv.getUint32(o + hdr + 4);
+      for (var j = 0; j < m; j++){
+        var q = o + hdr + 8 + j * 8;
+        dv.setBigUint64(q, dv.getBigUint64(q) + BigInt(delta));
+      }
+    }
+    o += size;
+  }
+  return true;
+}
+function fastStart(file){
+  return topAtoms(file).then(function(atoms){
+    var moov = null, firstMdat = -1;
+    atoms.forEach(function(a, i){
+      if (a.type === "moov" && !moov) moov = a;
+      if (a.type === "mdat" && firstMdat < 0) firstMdat = i;
+    });
+    if (!moov || firstMdat < 0 || moov.start < atoms[firstMdat].start) return null; // already fast-start or not an MP4
+    return readBytes(file, moov.start, moov.start + moov.size).then(function(buf){
+      var dv = new DataView(buf);
+      if (!patchOffsets(dv, 0, buf.byteLength, moov.size)) return null;
+      var parts = [];
+      atoms.forEach(function(a, i){
+        if (i === firstMdat) parts.push(buf);
+        if (a !== moov) parts.push(file.slice(a.start, a.start + a.size));
+      });
+      return new Blob(parts, {type: "video/mp4"});
+    });
+  }).catch(function(){ return null; });
+}
+
+/* ---------- dropzone ---------- */
+var drop = document.getElementById("drop");
+var fileInput = document.getElementById("fileInput");
+
+drop.addEventListener("click", function(){ fileInput.click(); });
+fileInput.addEventListener("change", function(){
+  if (fileInput.files.length) handleFile(fileInput.files[0]);
+});
+["dragover","dragenter"].forEach(function(ev){
+  drop.addEventListener(ev, function(e){ e.preventDefault(); drop.classList.add("over"); });
+});
+["dragleave","drop"].forEach(function(ev){
+  drop.addEventListener(ev, function(e){ e.preventDefault(); drop.classList.remove("over"); });
+});
+drop.addEventListener("drop", function(e){
+  if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+});
+
+function setStatus(msg, cls){
+  var el = document.getElementById("upstatus");
+  el.textContent = msg;
+  el.className = "upstatus " + (cls || "");
+  el.style.display = "block";
+}
+
+function cleanName(name){
+  var dot = name.lastIndexOf(".");
+  var base = dot > -1 ? name.slice(0, dot) : name;
+  var ext  = dot > -1 ? name.slice(dot).toLowerCase() : "";
+  base = base.toLowerCase().replace(/[^a-z0-9_-]+/g, "-").replace(/^-+|-+$/g, "");
+  /* random tag so the file URL can't be guessed from the client's name */
+  var tag = Array.prototype.map.call(crypto.getRandomValues(new Uint8Array(5)), function(b){
+    return "abcdefghjkmnpqrstuvwxyz23456789"[b % 31];
+  }).join("");
+  return (base || "video") + "-" + tag + ext;
+}
+
+function fmtBytes(n){
+  if (n >= 1073741824) return (n / 1073741824).toFixed(2) + " GB";
+  if (n >= 1048576) return (n / 1048576).toFixed(1) + " MB";
+  return Math.max(1, Math.round(n / 1024)) + " KB";
+}
+function fmtTime(s){
+  s = Math.max(0, Math.round(s));
+  return s >= 60 ? Math.floor(s / 60) + "m " + (s % 60) + "s" : s + "s";
+}
+
+function amzNow(){
+  return new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
+}
+
+function handleFile(file){
+  var name = cleanName(file.name);
+  if (!/\.(mp4|m4v)$/.test(name)){
+    if (!confirm(name + " isn't .mp4 or .m4v — some phones may not play it. Upload anyway?")) return;
+  }
+  var endpoint = "https://" + ACCOUNT_ID + ".r2.cloudflarestorage.com/" + BUCKET + "/" + name;
+  var c = creds();
+  setStatus("Preparing upload\u2026");
+  presign({
+    method: "PUT",
+    url: endpoint,
+    accessKeyId: c.key,
+    secretAccessKey: c.secret,
+    region: "auto",
+    datetime: amzNow(),
+    expires: 3600
+  }).then(function(signedUrl){
+    setStatus("Optimizing for instant playback\u2026");
+    return fastStart(file).then(function(fixed){
+      upload(fixed || file, name, signedUrl);
+    });
+  }).catch(function(){
+    setStatus("Couldn't prepare the upload. Check the saved keys (disconnect below and re-enter them).", "err");
+  });
+}
+
+function upload(file, name, signedUrl){
+  var xhr = new XMLHttpRequest();
+  xhr.open("PUT", signedUrl);
+  /* m4v is the same container as mp4 — serve both as video/mp4 for widest playback */
+  xhr.setRequestHeader("Content-Type", "video/mp4");
+
+  var prog = document.getElementById("prog");
+  var bar = document.getElementById("progBar");
+  var stats = document.getElementById("stats");
+  prog.style.display = "block";
+  stats.style.display = "grid";
+  bar.style.width = "0%";
+  drop.classList.add("busy");
+  document.getElementById("fName").textContent = name;
+  document.getElementById("fSize").textContent = fmtBytes(file.size);
+  document.getElementById("fileInfo").style.display = "flex";
+  setStatus("Transferring " + name + "\u2026");
+  var t0 = Date.now();
+  function done(){ drop.classList.remove("busy"); fileInput.value = ""; }
+
+  xhr.upload.onprogress = function(e){
+    if (e.lengthComputable){
+      var pct = Math.round((e.loaded / e.total) * 100);
+      bar.style.width = pct + "%";
+      var secs = (Date.now() - t0) / 1000;
+      var rate = secs > 0.5 ? e.loaded / secs : 0;
+      document.getElementById("stPct").textContent = pct + "%";
+      document.getElementById("stSent").textContent = fmtBytes(e.loaded);
+      document.getElementById("stSpeed").textContent = rate ? fmtBytes(rate) + "/s" : "\u2014";
+      document.getElementById("stEta").textContent = rate ? fmtTime((e.total - e.loaded) / rate) : "\u2014";
+    }
+  };
+  xhr.onload = function(){
+    prog.style.display = "none";
+    stats.style.display = "none";
+    done();
+    if (xhr.status >= 200 && xhr.status < 300){
+      setStatus("Transfer complete \u2014 " + fmtBytes(file.size) + " in " + fmtTime((Date.now() - t0) / 1000) + ". Add the client info below.", "ok");
+      document.getElementById("vfile").value = name;
+      document.getElementById("cname").focus();
+    } else if (xhr.status === 403){
+      setStatus("Storage said no (403). The saved keys are wrong or expired — disconnect below and re-enter them.", "err");
+    } else {
+      setStatus("Upload failed (error " + xhr.status + "). Try again.", "err");
+    }
+  };
+  xhr.onerror = function(){
+    prog.style.display = "none";
+    stats.style.display = "none";
+    done();
+    setStatus("Upload failed — couldn't reach storage. If this keeps happening, the bucket's CORS policy may be missing.", "err");
+  };
+  xhr.send(file);
+}
+
+/* ---------- link builder ---------- */
+function build(){
+  var v = document.getElementById("vfile").value.trim();
+  var c = document.getElementById("cname").value.trim();
+  var t = document.getElementById("vtitle").value.trim();
+  if (!v){ alert("Upload a video or enter its filename."); return; }
+
+  var src;
+  if (v.indexOf("://") > -1){
+    src = v;
+  } else {
+    var pub = creds().pub;
+    if (!pub){ alert("Connect storage first (or paste a full https:// URL)."); return; }
+    src = pub + "/" + v;
+  }
+  var link = BASE_URL + "watch.html?v=" + encodeURIComponent(src);
+  if (c) link += "&c=" + encodeURIComponent(c);
+  if (t) link += "&t=" + encodeURIComponent(t);
+
+  document.getElementById("linkBox").textContent = link;
+
+  var msg = (c ? "Hi " + c + ", " : "Hi, ") +
+    "I made a quick video for you" +
+    (t ? " — " + t : "") +
+    ". Take a look when you get a minute:\n\n" + link +
+    "\n\nJosh at McGrath Toyota";
+  document.getElementById("msgBox").textContent = msg;
+
+  var out = document.getElementById("out");
+  out.style.display = "block";
+  out.scrollIntoView({behavior:"smooth", block:"start"});
+}
+
+function copyText(id, btn){
+  var text = document.getElementById(id).textContent;
+  navigator.clipboard.writeText(text).then(function(){
+    var old = btn.textContent;
+    btn.textContent = "Copied";
+    setTimeout(function(){ btn.textContent = old; }, 1500);
+  });
+}
+</script>
+</body>
+</html>
