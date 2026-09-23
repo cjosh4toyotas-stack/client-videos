@@ -101,6 +101,14 @@ input:focus{border-color:var(--cyan);box-shadow:0 0 0 2px rgba(41,217,255,.08),0
 .btnrow{display:flex;gap:8px;margin-top:8px}.btnrow button,.copy{flex:1;width:100%}
 .copy.solo{margin-top:8px}.ghost{border-color:rgba(80,188,224,.4);background:transparent;box-shadow:none;color:#9ad2e6}
 .spacer{height:18px}
+.hlist{display:flex;flex-direction:column;gap:8px}
+.hrow{display:grid;grid-template-columns:1fr auto;gap:10px 14px;align-items:center;padding:12px 14px;border:1px solid rgba(80,188,224,.22);border-radius:10px;background:rgba(1,9,15,.6)}
+.hrow .hname{font-size:13px;color:#eafaff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hrow .hmeta{grid-column:1;font-size:11.5px;color:var(--muted);margin-top:2px}
+.hrow .hmeta b{color:#9ad2e6;font-weight:500}
+.hrow button{grid-column:2;grid-row:1/3;padding:10px 16px;font-size:10px;letter-spacing:.28em}
+.hempty{font-size:13px;color:var(--muted)}
+@media(max-width:760px){.hrow{grid-template-columns:1fr}.hrow button{grid-column:1;grid-row:auto;width:100%}}
 
 .features{max-width:900px;margin:22px auto 0;padding:0 18px;display:grid;grid-template-columns:repeat(4,1fr)}
 .feat{text-align:center;padding:14px 8px;border-left:1px solid rgba(60,200,255,.25)}
@@ -200,6 +208,11 @@ input:focus{border-color:var(--cyan);box-shadow:0 0 0 2px rgba(41,217,255,.08),0
       <h2>Ready-to-Send Text</h2>
       <div class="box msgbox" id="msgBox"></div>
       <button class="copy solo" onclick="copyText('msgBox', this)">Copy Message</button>
+    </section>
+
+    <section class="panel" id="historyCard" style="display:none">
+      <div class="panel-title">Sent Videos</div>
+      <div class="hlist" id="historyList"></div>
     </section>
   </main>
 
@@ -513,6 +526,7 @@ function upload(file, name, signedUrl){
       document.getElementById("vfile").value = name;
       document.getElementById("cname").focus();
       housekeep(name);
+      setTimeout(renderHistory, 1500);
     } else if (xhr.status === 403){
       setStatus("Storage said no (403). The saved keys are wrong or expired — disconnect below and re-enter them.", "err");
     } else {
@@ -599,7 +613,53 @@ function housekeep(keepKey){
   }).catch(function(){ /* housekeeping is best-effort; uploads never depend on it */ });
 }
 
-if (connected()){ listObjects().then(function(objs){ showStorage(objs.reduce(function(a, o){ return a + o.size; }, 0)); }).catch(function(){}); }
+/* ---------- sent-video history ---------- */
+var K_HIST = "cv_history";
+function histLoad(){ try { return JSON.parse(localStorage.getItem(K_HIST) || "[]"); } catch(e){ return []; } }
+function histSave(list){ try { localStorage.setItem(K_HIST, JSON.stringify(list.slice(0, 200))); } catch(e){} }
+function histRecord(key, client, title){
+  var list = histLoad().filter(function(h){ return !(h.key === key && h.client === client && h.title === title); });
+  list.unshift({ key: key, client: client, title: title, when: Date.now() });
+  histSave(list);
+}
+function escHtml(t){ return String(t).replace(/[&<>"']/g, function(m){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[m]; }); }
+function fmtDate(ms){ return new Date(ms).toLocaleDateString([], {month:"short", day:"numeric"}); }
+
+function renderHistory(){
+  var card = document.getElementById("historyCard");
+  var list = document.getElementById("historyList");
+  if (!connected()){ card.style.display = "none"; return; }
+  listObjects().then(function(objs){
+    var hist = histLoad();
+    objs.sort(function(a, b){ return b.modified - a.modified; });
+    showStorage(objs.reduce(function(a, o){ return a + o.size; }, 0));
+    if (!objs.length){ list.innerHTML = '<div class="hempty">No videos in storage yet.</div>'; card.style.display = "block"; return; }
+    list.innerHTML = objs.map(function(o){
+      var sent = hist.filter(function(h){ return h.key === o.key; });
+      var meta = fmtBytes(o.size) + " \u00b7 uploaded " + fmtDate(o.modified);
+      if (sent.length){
+        meta += " \u00b7 sent to <b>" + sent.map(function(h){ return escHtml(h.client || "(no name)"); }).join(", ") + "</b>";
+        if (sent[0].title) meta += " \u00b7 " + escHtml(sent[0].title);
+      }
+      return '<div class="hrow"><div class="hname" title="' + escHtml(o.key) + '">' + escHtml(o.key) + '</div>' +
+             '<div class="hmeta">' + meta + '</div>' +
+             '<button type="button" onclick="reuseVideo(this)" data-key="' + escHtml(o.key) + '" data-title="' + escHtml(sent.length ? (sent[0].title || "") : "") + '">Send again</button></div>';
+    }).join("");
+    card.style.display = "block";
+  }).catch(function(){ card.style.display = "none"; });
+}
+
+function reuseVideo(btn){
+  document.getElementById("vfile").value = btn.getAttribute("data-key");
+  document.getElementById("cname").value = "";
+  document.getElementById("vtitle").value = btn.getAttribute("data-title") || "";
+  document.getElementById("out").style.display = "none";
+  var panel = document.getElementById("client");
+  panel.scrollIntoView({behavior:"smooth", block:"start"});
+  setTimeout(function(){ document.getElementById("cname").focus(); }, 400);
+}
+
+renderHistory();
 
 /* ---------- link builder ---------- */
 function build(){
@@ -621,6 +681,7 @@ function build(){
   if (t) link += "&t=" + encodeURIComponent(t);
 
   document.getElementById("linkBox").textContent = link;
+  if (v.indexOf("://") === -1) histRecord(v, c, t);
 
   var msg = (c ? "Hi " + c + ", " : "Hi, ") +
     "I made a quick video for you" +
@@ -632,6 +693,7 @@ function build(){
   var out = document.getElementById("out");
   out.style.display = "block";
   out.scrollIntoView({behavior:"smooth", block:"start"});
+  renderHistory();
 }
 
 function copyText(id, btn){
