@@ -4,165 +4,40 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
-<title>Link Builder — Client Videos</title>
+<title>VECTOR VX — Video Exchange System</title>
 <style>
-  :root{
-    --red:#EB0A1E;
-    --charcoal:#1A1A1A;
-    --bg:#F5F5F4;
-    --line:#DDD;
-    --green:#1E8E3E;
-  }
-  *{margin:0;padding:0;box-sizing:border-box;}
-  body{
-    background:var(--bg);
-    color:var(--charcoal);
-    font-family:Arial, Helvetica, sans-serif;
-    padding:24px 16px 60px;
-  }
-  .wrap{max-width:640px;margin:0 auto;}
-  .mark{font-weight:bold;letter-spacing:2px;font-size:13px;margin-bottom:4px;}
-  .mark span{color:var(--red);}
-  h1{font-size:24px;margin-bottom:2px;}
-  .sub{color:#666;font-size:14px;margin-bottom:22px;}
-  .card{
-    background:#fff;
-    border:1px solid var(--line);
-    border-radius:10px;
-    padding:16px;
-    margin-bottom:20px;
-  }
-  .card h2{font-size:15px;margin-bottom:10px;}
-  .card p{font-size:13px;color:#555;line-height:1.5;margin-bottom:10px;}
-  .card a{color:var(--red);}
-  label{
-    display:block;
-    font-size:13px;
-    font-weight:bold;
-    margin:16px 0 5px;
-  }
-  .card label{margin-top:10px;}
-  input[type=text],input[type=password]{
-    width:100%;
-    padding:12px;
-    font-size:15px;
-    border:1px solid var(--line);
-    border-radius:8px;
-    background:#fff;
-    font-family:Arial, Helvetica, sans-serif;
-  }
-  .hint{font-size:12px;color:#888;margin-top:4px;}
-  button{
-    margin-top:14px;
-    width:100%;
-    padding:14px;
-    font-size:16px;
-    font-weight:bold;
-    color:#fff;
-    background:var(--red);
-    border:none;
-    border-radius:8px;
-    cursor:pointer;
-    font-family:Arial, Helvetica, sans-serif;
-  }
-  .drop{
-    border:2px dashed #BBB;
-    border-radius:10px;
-    background:#FAFAF9;
-    padding:34px 16px;
-    text-align:center;
-    color:#666;
-    font-size:15px;
-    cursor:pointer;
-  }
-  .drop.over{border-color:var(--red);background:#FFF5F5;color:var(--charcoal);}
-  .drop strong{color:var(--charcoal);}
-  .drop .small{font-size:12px;color:#999;margin-top:6px;}
-  .progress{
-    display:none;
-    margin-top:12px;
-    height:10px;
-    background:#EEE;
-    border-radius:5px;
-    overflow:hidden;
-  }
-  .progress i{display:block;height:100%;width:0;background:var(--red);transition:width .2s;}
-  .upstatus{font-size:13px;margin-top:10px;display:none;line-height:1.5;}
-  .upstatus.ok{color:var(--green);font-weight:bold;}
-  .upstatus.err{color:var(--red);font-weight:bold;}
-  .tiny{font-size:12px;color:#999;margin-top:10px;}
-  .tiny a{color:#999;}
-  .out{margin-top:26px;display:none;}
-  .out h2{font-size:15px;margin-bottom:6px;}
-  .box{
-    background:#fff;
-    border:1px solid var(--line);
-    border-radius:8px;
-    padding:12px;
-    font-size:14px;
-    word-break:break-all;
-    line-height:1.5;
-  }
-  .copy{margin-top:8px;background:var(--charcoal);padding:11px;font-size:14px;}
-  .msgbox{white-space:pre-wrap;word-break:normal;}
-  .spacer{height:14px;}
+:root{--cyan:#29d9ff;--cyan2:#8beaff;--ink:#02070d;--panel:rgba(3,16,27,.78);--line:rgba(64,216,255,.30);--text:#f2fbff;--muted:#83a7b7;--green:#53f5bb;--red:#ff6278}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:#01050a}
+body{min-height:100vh;color:var(--text);font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;background:radial-gradient(circle at 50% 38%,rgba(0,156,225,.20),transparent 25%),linear-gradient(180deg,#01050a 0%,#03101a 55%,#01060b 100%);overflow-x:hidden;padding:0 22px 64px}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;background:linear-gradient(rgba(34,206,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(34,206,255,.025) 1px,transparent 1px);background-size:70px 70px;mask-image:linear-gradient(to bottom,transparent 5%,#000 40%,#000 100%)}
+body:after{content:"";position:fixed;left:-10%;right:-10%;top:340px;height:2px;background:var(--cyan);box-shadow:0 0 15px var(--cyan),0 0 60px #078fd0;opacity:.55;pointer-events:none}
+.topbar{height:74px;max-width:1240px;margin:auto;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(83,213,255,.10);position:relative;z-index:2}
+.nav{font-size:10px;letter-spacing:.38em;color:#a9d9eb;text-transform:uppercase}.by{font-size:10px;letter-spacing:.38em;color:#a9d9eb}.brand{text-align:center;padding:60px 0 34px;position:relative;z-index:2}.logo{font-size:clamp(48px,8vw,92px);font-weight:600;letter-spacing:.035em;line-height:.9;text-shadow:0 0 24px rgba(81,207,255,.18)}.logo .vx{color:transparent;-webkit-text-stroke:2px var(--cyan);text-shadow:0 0 18px rgba(38,216,255,.5)}.system{margin-top:20px;font-size:14px;letter-spacing:.52em;text-transform:uppercase}.author{display:flex;align-items:center;justify-content:center;gap:20px;margin-top:20px;color:#c8e7f1;letter-spacing:.24em;font-size:13px}.author:before,.author:after{content:"";width:145px;height:1px;background:linear-gradient(90deg,transparent,var(--cyan))}.author:after{transform:scaleX(-1)}.tag{margin-top:38px;color:var(--cyan);font-size:11px;letter-spacing:.55em;text-transform:uppercase}
+.shell{max-width:900px;margin:auto;position:relative;z-index:2}.panel{background:linear-gradient(180deg,rgba(4,21,34,.88),rgba(2,12,21,.94));border:1px solid var(--line);box-shadow:0 0 0 1px rgba(0,0,0,.7),0 22px 70px rgba(0,0,0,.48),inset 0 0 40px rgba(27,173,226,.025);border-radius:18px;padding:24px;margin-bottom:18px;backdrop-filter:blur(16px)}.panel-title{font-size:10px;letter-spacing:.34em;text-transform:uppercase;color:var(--cyan2);margin-bottom:14px}.setupcopy{font-size:13px;line-height:1.6;color:var(--muted)}
+.drop{min-height:250px;border:1px dashed rgba(73,218,255,.65);border-radius:13px;display:flex;align-items:center;justify-content:center;text-align:center;cursor:pointer;background:radial-gradient(circle at center,rgba(29,191,255,.07),transparent 62%);transition:.2s;position:relative;overflow:hidden}.drop:before{content:"↑";position:absolute;top:44px;width:54px;height:54px;border:1px solid rgba(105,225,255,.8);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:30px;color:var(--cyan);box-shadow:0 0 24px rgba(31,204,255,.14)}.drop:hover,.drop.over{border-color:var(--cyan);background:radial-gradient(circle at center,rgba(29,191,255,.14),transparent 62%);box-shadow:inset 0 0 40px rgba(33,194,255,.05)}.drop strong{display:block;margin-top:72px;font-size:14px;letter-spacing:.22em;text-transform:uppercase}.drop .small{margin-top:11px;font-size:11px;color:var(--muted);letter-spacing:.08em}
+.progress{display:none;margin-top:16px;height:4px;background:#071a27;border-radius:5px;overflow:hidden}.progress i{display:block;height:100%;width:0;background:var(--cyan);box-shadow:0 0 12px var(--cyan);transition:width .2s}.upstatus{display:none;margin-top:12px;font-size:12px;color:var(--muted)}.upstatus.ok{color:var(--green)}.upstatus.err{color:var(--red)}.tiny{font-size:10px;color:#547080;margin-top:13px}.tiny a{color:#6ebdd8;text-decoration:none}
+.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.field.full{grid-column:1/-1}label{display:block;font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:#89c7dc;margin:0 0 7px}input[type=text],input[type=password]{width:100%;padding:13px 14px;border-radius:8px;border:1px solid rgba(80,188,224,.22);background:rgba(1,9,15,.74);color:#eafaff;outline:none;font-size:14px;transition:.2s}input:focus{border-color:var(--cyan);box-shadow:0 0 0 2px rgba(41,217,255,.08),0 0 20px rgba(41,217,255,.07)}.hint{font-size:10px;color:#5f8291;margin-top:6px;line-height:1.45}
+button{border:1px solid var(--cyan);background:rgba(4,40,57,.64);color:#bff3ff;border-radius:8px;padding:13px 18px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;font-size:11px;cursor:pointer;box-shadow:0 0 16px rgba(41,217,255,.08);transition:.2s}button:hover{background:rgba(17,126,164,.28);box-shadow:0 0 22px rgba(41,217,255,.18)}.primary{width:100%;margin-top:18px}.setupbtn{width:100%;margin-top:15px}.out{display:none}.out h2{font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:#89c7dc;margin:4px 0 8px}.box{background:rgba(1,9,15,.8);border:1px solid rgba(80,188,224,.22);border-radius:8px;padding:13px;color:#cfeefa;font-size:12px;line-height:1.55;word-break:break-all}.msgbox{white-space:pre-wrap;word-break:normal;overflow-wrap:anywhere}.copy{width:100%;margin-top:8px}.spacer{height:18px}.footer{max-width:900px;margin:26px auto 0;display:flex;justify-content:space-between;color:#4f7f91;font-size:9px;letter-spacing:.32em;text-transform:uppercase;position:relative;z-index:2}
+.status-pill{display:flex;align-items:center;gap:9px;font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:#a9d9eb}.status-pill i{width:8px;height:8px;border-radius:50%;background:#3a5664;box-shadow:none}.status-pill.on i{background:var(--green);box-shadow:0 0 10px var(--green)}.status-pill.off i{background:var(--red);box-shadow:0 0 10px var(--red)}
+.fileinfo{display:none;margin-top:16px;padding:12px 14px;border:1px solid rgba(80,188,224,.22);border-radius:10px;background:rgba(1,9,15,.6);font-size:12px;color:#cfeefa;justify-content:space-between;gap:12px}.fileinfo .fname{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.fileinfo .fsize{color:var(--muted);flex-shrink:0}
+.stats{display:none;margin-top:10px;grid-template-columns:repeat(4,1fr);gap:8px}.stat{padding:10px;border:1px solid rgba(80,188,224,.16);border-radius:8px;background:rgba(1,9,15,.5)}.stat b{display:block;font-size:15px;font-weight:600;color:var(--cyan2);font-variant-numeric:tabular-nums}.stat span{display:block;margin-top:3px;font-size:8.5px;letter-spacing:.24em;text-transform:uppercase;color:#5f8291}
+.progress{height:6px!important}.progress i{background:linear-gradient(90deg,#0a8fd0,var(--cyan),var(--cyan2))!important;position:relative}.progress i:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);animation:sweep 1.2s linear infinite}@keyframes sweep{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
+.drop.busy{pointer-events:none;opacity:.55}.btnrow{display:flex;gap:8px}.btnrow button{flex:1}.ghost{border-color:rgba(80,188,224,.35);background:transparent;color:#89c7dc}
+@media(max-width:650px){.stats{grid-template-columns:repeat(2,1fr)}.status-pill{letter-spacing:.15em}}
+@media(max-width:650px){body{padding:0 12px 40px}.topbar{height:58px}.nav{letter-spacing:.2em}.by{letter-spacing:.2em}.brand{padding:42px 0 28px}.system{font-size:10px;letter-spacing:.34em}.author:before,.author:after{width:55px}.tag{letter-spacing:.32em}.panel{padding:16px}.formgrid{grid-template-columns:1fr}.field.full{grid-column:auto}.drop{min-height:220px}.footer{display:none}}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <div class="mark">McGRATH <span>TOYOTA</span></div>
-  <h1>Client Video Link Builder</h1>
-  <div class="sub">Drop the video below, then build the client link.</div>
-
-  <!-- one-time storage connection (per device) -->
-  <div class="card" id="setupCard" style="display:none;">
-    <h2>One-time setup on this device</h2>
-    <p>Uploads go to the client-videos storage bucket on Cloudflare. Paste the three values from the Cloudflare dashboard &mdash; they're saved only in this browser, on this device.</p>
-    <label for="inKey">Access Key ID</label>
-    <input type="text" id="inKey" autocomplete="off">
-    <label for="inSecret">Secret Access Key</label>
-    <input type="password" id="inSecret" autocomplete="off">
-    <label for="inPub">Public URL</label>
-    <input type="text" id="inPub" placeholder="https://pub-xxxxxxxx.r2.dev">
-    <button onclick="saveCreds()">Save on this device</button>
-  </div>
-
-  <!-- dropzone -->
-  <div class="card" id="dropCard" style="display:none;">
-    <h2>Upload video</h2>
-    <div class="drop" id="drop">
-      <strong>Drag the video file here</strong> or tap to choose<br>
-      <div class="small">.mp4 or .m4v &middot; big 60fps files are fine &middot; never touches the repo</div>
-    </div>
-    <input type="file" id="fileInput" accept="video/mp4,video/x-m4v,.mp4,.m4v" style="display:none;">
-    <div class="progress" id="prog"><i id="progBar"></i></div>
-    <div class="upstatus" id="upstatus"></div>
-    <div class="tiny">Storage connected on this device &middot; <a href="#" onclick="forgetCreds(event)">disconnect</a></div>
-  </div>
-
-  <label for="vfile">Video file</label>
-  <input type="text" id="vfile" placeholder="bailey-highlander.mp4">
-  <div class="hint">Fills in automatically after an upload. Or type a filename already uploaded, or paste a full https:// URL.</div>
-
-  <label for="cname">Client first name</label>
-  <input type="text" id="cname" placeholder="Bailey">
-
-  <label for="vtitle">Video title</label>
-  <input type="text" id="vtitle" placeholder="2022 Highlander XLE Walkaround">
-
-  <button onclick="build()">Build link</button>
-
-  <div class="out" id="out">
-    <h2>Share link</h2>
-    <div class="box" id="linkBox"></div>
-    <button class="copy" onclick="copyText('linkBox', this)">Copy link</button>
-    <div class="spacer"></div>
-    <h2>Ready-to-send text</h2>
-    <div class="box msgbox" id="msgBox"></div>
-    <button class="copy" onclick="copyText('msgBox', this)">Copy message</button>
-  </div>
-</div>
-
+<header class="topbar"><div class="nav">Vector VX&nbsp;&nbsp;//&nbsp;&nbsp;VXS</div><div class="status-pill" id="statusPill"><i></i><span id="statusText">Storage</span></div></header>
+<section class="brand"><div class="logo">VECTOR <span class="vx">VX</span></div><div class="system">Video Exchange System</div><div class="author">by Josh Hicks</div><div class="tag">Move Ideas Further</div></section>
+<main class="shell">
+  <section class="panel" id="setupCard" style="display:none"><div class="panel-title">Secure Storage Connection</div><p class="setupcopy">One-time setup on this device. Your Cloudflare storage credentials stay saved only in this browser.</p><div class="formgrid" style="margin-top:16px"><div class="field"><label for="inKey">Access Key ID</label><input type="text" id="inKey" autocomplete="off"></div><div class="field"><label for="inSecret">Secret Access Key</label><input type="password" id="inSecret" autocomplete="off"></div><div class="field full"><label for="inPub">Public URL</label><input type="text" id="inPub" placeholder="https://pub-xxxxxxxx.r2.dev"></div></div><button class="setupbtn" onclick="saveCreds()">Connect Vector VX</button></section>
+  <section class="panel" id="dropCard" style="display:none"><div class="panel-title">Video Transfer</div><div class="drop" id="drop"><div><strong>Drag &amp; Drop Your Video Here</strong><div class="small">or tap to choose · .mp4 or .m4v · large 60fps files supported</div></div></div><input type="file" id="fileInput" accept="video/mp4,video/x-m4v,.mp4,.m4v" style="display:none"><div class="fileinfo" id="fileInfo"><span class="fname" id="fName"></span><span class="fsize" id="fSize"></span></div><div class="progress" id="prog"><i id="progBar"></i></div><div class="stats" id="stats"><div class="stat"><b id="stPct">0%</b><span>Complete</span></div><div class="stat"><b id="stSent">0 MB</b><span>Sent</span></div><div class="stat"><b id="stSpeed">—</b><span>Speed</span></div><div class="stat"><b id="stEta">—</b><span>Time left</span></div></div><div class="upstatus" id="upstatus"></div><div class="tiny">Storage connected on this device · <a href="#" onclick="forgetCreds(event)">disconnect</a></div></section>
+  <section class="panel"><div class="panel-title">Client Info</div><div class="formgrid"><div class="field full"><label for="vfile">Video File</label><input type="text" id="vfile" placeholder="bailey-highlander.mp4"><div class="hint">Fills automatically after upload. You can also enter an existing filename or full https:// URL.</div></div><div class="field"><label for="cname">Client First Name</label><input type="text" id="cname" placeholder="Bailey"></div><div class="field"><label for="vtitle">Video Title</label><input type="text" id="vtitle" placeholder="2026 Highlander XLE"></div></div><button class="primary" onclick="build()">Generate Transfer Link</button></section>
+  <section class="panel out" id="out"><div class="panel-title">Transfer Ready</div><h2>Share Link</h2><div class="box" id="linkBox"></div><div class="btnrow"><button class="copy" onclick="copyText('linkBox', this)">Copy Link</button><button class="copy ghost" onclick="window.open(document.getElementById('linkBox').textContent,'_blank')">Preview</button></div><div class="spacer"></div><h2>Ready-to-Send Text</h2><div class="box msgbox" id="msgBox"></div><button class="copy" onclick="copyText('msgBox', this)">Copy Message</button></section>
+</main>
+<footer class="footer"><span>Fast Transfers · Secure Sharing</span><span>VECTOR VX</span></footer>
 <script>
 /* ================= CONFIG ================= */
 var ACCOUNT_ID = "ee08483725cbf0f4b7f8022b9d149c50";
@@ -183,6 +58,9 @@ function connected(){ var c = creds(); return c.key && c.secret && c.pub; }
 function showState(){
   document.getElementById("setupCard").style.display = connected() ? "none" : "block";
   document.getElementById("dropCard").style.display  = connected() ? "block" : "none";
+  var pill = document.getElementById("statusPill");
+  pill.className = "status-pill " + (connected() ? "on" : "off");
+  document.getElementById("statusText").textContent = connected() ? "Storage online" : "Storage offline";
 }
 showState();
 
@@ -266,6 +144,79 @@ function presign(opts){
   });
 }
 
+/* ---------- fast-start: move the MP4 index (moov) to the front so phones start playing right away ---------- */
+function readBytes(blob, start, end){
+  return blob.slice(start, end).arrayBuffer();
+}
+function boxType(dv, o){
+  return String.fromCharCode(dv.getUint8(o+4), dv.getUint8(o+5), dv.getUint8(o+6), dv.getUint8(o+7));
+}
+function topAtoms(file){
+  var atoms = [];
+  function next(off){
+    if (off + 8 > file.size) return Promise.resolve(atoms);
+    return readBytes(file, off, off + 16).then(function(buf){
+      var dv = new DataView(buf);
+      var size = dv.getUint32(0), hdr = 8;
+      if (size === 1){ size = Number(dv.getBigUint64(8)); hdr = 16; }
+      else if (size === 0){ size = file.size - off; }
+      if (size < hdr) return atoms; // malformed — stop scanning
+      atoms.push({type: boxType(dv, 0), start: off, size: size});
+      return next(off + size);
+    });
+  }
+  return next(0);
+}
+function patchOffsets(dv, start, end, delta){
+  var CONTAINERS = {moov:1, trak:1, mdia:1, minf:1, stbl:1};
+  var o = start;
+  while (o + 8 <= end){
+    var size = dv.getUint32(o), hdr = 8;
+    if (size === 1){ size = Number(dv.getBigUint64(o + 8)); hdr = 16; }
+    else if (size === 0){ size = end - o; }
+    if (size < hdr || o + size > end) return false;
+    var t = boxType(dv, o);
+    if (CONTAINERS[t]){
+      if (!patchOffsets(dv, o + hdr, o + size, delta)) return false;
+    } else if (t === "stco"){
+      var n = dv.getUint32(o + hdr + 4);
+      for (var i = 0; i < n; i++){
+        var p = o + hdr + 8 + i * 4, v = dv.getUint32(p) + delta;
+        if (v > 0xFFFFFFFF) return false; // would overflow 32-bit offsets — leave file as-is
+        dv.setUint32(p, v);
+      }
+    } else if (t === "co64"){
+      var m = dv.getUint32(o + hdr + 4);
+      for (var j = 0; j < m; j++){
+        var q = o + hdr + 8 + j * 8;
+        dv.setBigUint64(q, dv.getBigUint64(q) + BigInt(delta));
+      }
+    }
+    o += size;
+  }
+  return true;
+}
+function fastStart(file){
+  return topAtoms(file).then(function(atoms){
+    var moov = null, firstMdat = -1;
+    atoms.forEach(function(a, i){
+      if (a.type === "moov" && !moov) moov = a;
+      if (a.type === "mdat" && firstMdat < 0) firstMdat = i;
+    });
+    if (!moov || firstMdat < 0 || moov.start < atoms[firstMdat].start) return null; // already fast-start or not an MP4
+    return readBytes(file, moov.start, moov.start + moov.size).then(function(buf){
+      var dv = new DataView(buf);
+      if (!patchOffsets(dv, 0, buf.byteLength, moov.size)) return null;
+      var parts = [];
+      atoms.forEach(function(a, i){
+        if (i === firstMdat) parts.push(buf);
+        if (a !== moov) parts.push(file.slice(a.start, a.start + a.size));
+      });
+      return new Blob(parts, {type: "video/mp4"});
+    });
+  }).catch(function(){ return null; });
+}
+
 /* ---------- dropzone ---------- */
 var drop = document.getElementById("drop");
 var fileInput = document.getElementById("fileInput");
@@ -296,7 +247,21 @@ function cleanName(name){
   var base = dot > -1 ? name.slice(0, dot) : name;
   var ext  = dot > -1 ? name.slice(dot).toLowerCase() : "";
   base = base.toLowerCase().replace(/[^a-z0-9_-]+/g, "-").replace(/^-+|-+$/g, "");
-  return (base || "video") + ext;
+  /* random tag so the file URL can't be guessed from the client's name */
+  var tag = Array.prototype.map.call(crypto.getRandomValues(new Uint8Array(5)), function(b){
+    return "abcdefghjkmnpqrstuvwxyz23456789"[b % 31];
+  }).join("");
+  return (base || "video") + "-" + tag + ext;
+}
+
+function fmtBytes(n){
+  if (n >= 1073741824) return (n / 1073741824).toFixed(2) + " GB";
+  if (n >= 1048576) return (n / 1048576).toFixed(1) + " MB";
+  return Math.max(1, Math.round(n / 1024)) + " KB";
+}
+function fmtTime(s){
+  s = Math.max(0, Math.round(s));
+  return s >= 60 ? Math.floor(s / 60) + "m " + (s % 60) + "s" : s + "s";
 }
 
 function amzNow(){
@@ -320,7 +285,10 @@ function handleFile(file){
     datetime: amzNow(),
     expires: 3600
   }).then(function(signedUrl){
-    upload(file, name, signedUrl);
+    setStatus("Optimizing for instant playback\u2026");
+    return fastStart(file).then(function(fixed){
+      upload(fixed || file, name, signedUrl);
+    });
   }).catch(function(){
     setStatus("Couldn't prepare the upload. Check the saved keys (disconnect below and re-enter them).", "err");
   });
@@ -334,21 +302,36 @@ function upload(file, name, signedUrl){
 
   var prog = document.getElementById("prog");
   var bar = document.getElementById("progBar");
+  var stats = document.getElementById("stats");
   prog.style.display = "block";
+  stats.style.display = "grid";
   bar.style.width = "0%";
-  setStatus("Uploading " + name + "\u2026");
+  drop.classList.add("busy");
+  document.getElementById("fName").textContent = name;
+  document.getElementById("fSize").textContent = fmtBytes(file.size);
+  document.getElementById("fileInfo").style.display = "flex";
+  setStatus("Transferring " + name + "\u2026");
+  var t0 = Date.now();
+  function done(){ drop.classList.remove("busy"); fileInput.value = ""; }
 
   xhr.upload.onprogress = function(e){
     if (e.lengthComputable){
       var pct = Math.round((e.loaded / e.total) * 100);
       bar.style.width = pct + "%";
-      setStatus("Uploading " + name + "\u2026 " + pct + "%");
+      var secs = (Date.now() - t0) / 1000;
+      var rate = secs > 0.5 ? e.loaded / secs : 0;
+      document.getElementById("stPct").textContent = pct + "%";
+      document.getElementById("stSent").textContent = fmtBytes(e.loaded);
+      document.getElementById("stSpeed").textContent = rate ? fmtBytes(rate) + "/s" : "\u2014";
+      document.getElementById("stEta").textContent = rate ? fmtTime((e.total - e.loaded) / rate) : "\u2014";
     }
   };
   xhr.onload = function(){
     prog.style.display = "none";
+    stats.style.display = "none";
+    done();
     if (xhr.status >= 200 && xhr.status < 300){
-      setStatus(name + " uploaded.", "ok");
+      setStatus("Transfer complete \u2014 " + fmtBytes(file.size) + " in " + fmtTime((Date.now() - t0) / 1000) + ". Add the client info below.", "ok");
       document.getElementById("vfile").value = name;
       document.getElementById("cname").focus();
     } else if (xhr.status === 403){
@@ -359,6 +342,8 @@ function upload(file, name, signedUrl){
   };
   xhr.onerror = function(){
     prog.style.display = "none";
+    stats.style.display = "none";
+    done();
     setStatus("Upload failed — couldn't reach storage. If this keeps happening, the bucket's CORS policy may be missing.", "err");
   };
   xhr.send(file);
@@ -392,7 +377,9 @@ function build(){
     "\n\nJosh at McGrath Toyota";
   document.getElementById("msgBox").textContent = msg;
 
-  document.getElementById("out").style.display = "block";
+  var out = document.getElementById("out");
+  out.style.display = "block";
+  out.scrollIntoView({behavior:"smooth", block:"start"});
 }
 
 function copyText(id, btn){
