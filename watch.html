@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
 <title>Your Video — Josh Hicks</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Exo+2:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
     --red:#1FB6FF;
@@ -40,7 +43,7 @@
   .mark span{color:var(--red);}
   main{
     width:100%;
-    max-width:1180px;
+    max-width:1040px;
     margin:0 auto;
     padding:16px;
     flex:1;
@@ -93,7 +96,7 @@
   video{
     display:block;
     width:100%;
-    max-height:88vh;
+    max-height:66vh;
     aspect-ratio:16/9;
     background:#000;
   }
@@ -134,7 +137,23 @@
     line-height:1.6;
   }
   /* words and links hidden — video only */
-  header,footer,.after,.eyebrow,h1,.vtitle{display:none;}
+  header,footer{display:none;}
+  main{flex-direction:column;justify-content:center;gap:0;}
+  .intro{width:100%;text-align:center;margin-bottom:16px;}
+  .eyebrow{font-family:"Orbitron",Arial,sans-serif;color:#35d6ff;font-size:11px;letter-spacing:.5em;text-transform:uppercase;font-weight:500;text-shadow:0 0 12px rgba(53,214,255,.6);}
+  h1{font-family:"Orbitron",Arial,sans-serif;font-size:clamp(28px,4.5vw,52px);font-weight:700;letter-spacing:.06em;margin:8px 0 6px;color:#f6fdff;text-shadow:0 0 14px rgba(190,240,255,.45),0 0 40px rgba(60,190,255,.35);}
+  .vtitle{font-family:"Exo 2",Arial,sans-serif;color:#bfe6f3;font-size:clamp(14px,1.6vw,18px);letter-spacing:.12em;text-transform:uppercase;margin-bottom:0;}
+  .dl{margin-top:16px;width:100%;padding:14px 18px;border-radius:8px;font-family:"Orbitron",Arial,sans-serif;font-size:12px;font-weight:500;letter-spacing:.32em;text-transform:uppercase;color:#d9f7ff;background:rgba(4,30,52,.72);border:1.5px solid #35d6ff;box-shadow:0 0 14px rgba(53,214,255,.35),inset 0 0 14px rgba(53,214,255,.08);cursor:pointer;transition:.2s;}
+  .dl:hover{background:rgba(17,120,170,.45);box-shadow:0 0 26px rgba(53,214,255,.55);color:#fff;}
+  .dl:disabled{opacity:.6;cursor:default;}
+  .dlnote{color:#8fb6c8;font-size:12.5px;margin-top:8px;text-align:center;display:none;}
+  .after{width:100%;margin-top:16px;background:linear-gradient(180deg,rgba(6,20,36,.82),rgba(3,12,24,.9));border:1px solid rgba(70,200,255,.32);border-radius:12px;padding:16px;backdrop-filter:blur(14px);box-shadow:0 20px 60px rgba(0,0,0,.6),0 0 30px rgba(20,150,255,.12);}
+  .after p{font-family:"Exo 2",Arial,sans-serif;color:#e6f7ff;font-size:15px;margin-bottom:12px;text-align:center;}
+  .btn{font-family:"Orbitron",Arial,sans-serif;font-size:12px;font-weight:500;letter-spacing:.3em;text-transform:uppercase;border-radius:8px;padding:14px 16px;transition:.2s;}
+  .btn.call{background:linear-gradient(180deg,#1fb6ff,#0a8fd0);color:#fff;border:1.5px solid #35d6ff;box-shadow:0 0 16px rgba(53,214,255,.45);}
+  .btn.text{background:rgba(4,30,52,.72);color:#d9f7ff;border:1.5px solid rgba(53,214,255,.6);box-shadow:0 0 12px rgba(53,214,255,.2);}
+  .btn:hover{box-shadow:0 0 26px rgba(53,214,255,.6);color:#fff;}
+  .wm{font-family:"Exo 2",Arial,sans-serif;}
   @media (max-width:480px){
     h1{font-size:27px;}
   }
@@ -146,14 +165,19 @@
 </header>
 
 <main>
-  <div class="eyebrow" id="eyebrow">A video for</div>
-  <h1 id="clientName">You</h1>
-  <div class="vtitle" id="videoTitle"></div>
+  <div class="intro">
+    <div class="eyebrow" id="eyebrow">A video for</div>
+    <h1 id="clientName">You</h1>
+    <div class="vtitle" id="videoTitle"></div>
+  </div>
 
   <div class="frame">
     <video id="player" controls playsinline preload="metadata"></video>
     <div class="wm"><strong>Josh Hicks</strong><br>319-631-1461</div>
   </div>
+
+  <button class="dl" id="dlBtn" type="button">Download video</button>
+  <div class="dlnote" id="dlNote"></div>
 
   <div class="after">
     <p id="afterMsg">Questions after you watch? I'm one tap away.</p>
@@ -206,9 +230,57 @@ if (vsrc){
   player.src = vsrc; // filename in this repo, or a full https:// URL
 } else {
   document.querySelector(".frame").style.display = "none";
+  document.getElementById("dlBtn").style.display = "none";
   document.getElementById("afterMsg").textContent =
     "This video link is missing its video. Call or text me and I'll resend it.";
 }
+
+/* ---------- download ---------- */
+var dlBtn = document.getElementById("dlBtn");
+var dlNote = document.getElementById("dlNote");
+var dlName = (vsrc.split("/").pop() || "video.mp4").split("?")[0];
+
+function dlMsg(t){ dlNote.textContent = t; dlNote.style.display = t ? "block" : "none"; }
+
+function openFallback(){
+  window.open(vsrc, "_blank");
+  dlMsg("The video opened in a new tab. On iPhone tap Share \u2192 Save Video; on a computer right-click \u2192 Save Video As.");
+}
+
+dlBtn.addEventListener("click", function(){
+  if (!vsrc) return;
+  beacon("Downloaded", 100);
+  if (!window.fetch || !window.ReadableStream){ openFallback(); return; }
+  dlBtn.disabled = true;
+  dlBtn.textContent = "Downloading\u2026";
+  fetch(vsrc).then(function(r){
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    var total = +r.headers.get("Content-Length") || 0;
+    var reader = r.body.getReader(), got = 0, chunks = [];
+    function pump(){
+      return reader.read().then(function(res){
+        if (res.done) return new Blob(chunks, {type:"video/mp4"});
+        chunks.push(res.value); got += res.value.length;
+        if (total) dlBtn.textContent = "Downloading\u2026 " + Math.round(got / total * 100) + "%";
+        return pump();
+      });
+    }
+    return pump();
+  }).then(function(blob){
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url; a.download = dlName;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 60000);
+    dlBtn.textContent = "Saved";
+    dlMsg("Saved to your Downloads folder.");
+    setTimeout(function(){ dlBtn.disabled = false; dlBtn.textContent = "Download video"; }, 4000);
+  }).catch(function(){
+    dlBtn.disabled = false;
+    dlBtn.textContent = "Download video";
+    openFallback();
+  });
+});
 
 /* ---------- tracking ---------- */
 var trackingOn = TRACK.FORM_ID.indexOf("PASTE_") === -1;
